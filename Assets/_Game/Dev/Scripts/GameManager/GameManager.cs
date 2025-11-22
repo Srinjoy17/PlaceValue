@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public SlotManager slotManager;
     public TileManager tileManager;
+    public GameOverManager gameOverManager;
 
     private int currentQuestion = 0;
     private int totalQuestions = 5;
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
         GameEvents.OnTileCorrect += HandleCorrectTile;
         GameEvents.OnTileWrong += HandleWrongTile;
         GameEvents.OnGameOver += HandleGameOver;
+        gameOverManager.gameObject.SetActive(false);
     }
 
     void OnDisable()
@@ -40,6 +42,8 @@ public class GameManager : MonoBehaviour
         if (currentQuestion >= totalQuestions)
         {
             Debug.Log("GAME COMPLETE!");
+            gameOverManager.gameObject.SetActive(true);
+            gameOverManager.GameWon();
             return;
         }
 
@@ -110,5 +114,7 @@ public class GameManager : MonoBehaviour
     void HandleGameOver()
     {
         Debug.Log("GAME OVER — Time up or Health = 0");
+        gameOverManager.gameObject.SetActive(true);
+        gameOverManager.GameLost();
     }
 }
