@@ -9,4 +9,9 @@ public static class GameEvents
     public static Action OnGameOver;
 
     public static Action<int> OnTimerTick;
+    
+
+    public static Action<int> OnScoreUpdated;
+    public static Action OnScoreFinal;
+
 }
