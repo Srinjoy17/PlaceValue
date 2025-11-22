@@ -12,7 +12,6 @@ public class SlotManager : MonoBehaviour
 
     void Awake()
     {
-        // ORDER IS VERY IMPORTANT (left → right)
         slotScripts = new DropSlot[]
         {
             slotTenThousands.GetComponent<DropSlot>(), // 0
@@ -25,45 +24,25 @@ public class SlotManager : MonoBehaviour
 
     public void SetupSlots(int[] digits)
     {
-        // Disable all slots before activating required ones
-        slotTenThousands.SetActive(false);
-        slotThousands.SetActive(false);
-        slotHundreds.SetActive(false);
-        slotTens.SetActive(false);
-        slotOnes.SetActive(false);
+        // DO NOT disable slots anymore!
+        // All slots are always visible.
 
         int len = digits.Length;
 
-        // RIGHT ALIGN DIGITS IN SLOTS
-        // Example:
-        // digits = {4, 3} (len=2)
-        // startSlotID = 5 - 2 = 3
-        // slot 3 = Tens → 4
-        // slot 4 = Ones → 3
+        // RIGHT ALIGN like before
         int startSlotID = 5 - len;
 
+        // First reset ALL expected values (so old values won't interfere)
+        for (int i = 0; i < 5; i++)
+        {
+            slotScripts[i].SetExpectedValue(-999); // impossible value
+        }
+
+        // Now correctly assign expected digits
         for (int i = 0; i < len; i++)
         {
-            int slotID = startSlotID + i; // correct mapping for your UI
-
-            GameObject slotObj = GetSlotObject(slotID);
-            slotObj.SetActive(true);
-
+            int slotID = startSlotID + i;
             slotScripts[slotID].SetExpectedValue(digits[i]);
         }
-    }
-
-    // Helper to get slot by index
-    private GameObject GetSlotObject(int id)
-    {
-        switch (id)
-        {
-            case 0: return slotTenThousands;
-            case 1: return slotThousands;
-            case 2: return slotHundreds;
-            case 3: return slotTens;
-            case 4: return slotOnes;
-        }
-        return null;
     }
 }
