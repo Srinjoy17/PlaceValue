@@ -4,6 +4,7 @@ public static class GameEvents
 {
     public static Action OnTileCorrect;
     public static Action OnTileWrong;
+    public static Action OnCorrectPlacement;
 
     public static Action<int> OnHealthChanged;
     public static Action OnGameOver;

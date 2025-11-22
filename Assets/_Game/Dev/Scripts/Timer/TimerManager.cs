@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -7,6 +8,11 @@ public class TimerManager : MonoBehaviour
 
     private float timeRemaining = 60f; // 1 minute
     private bool running = true;
+
+    private void Start()
+    {
+        GameEvents.OnCorrectPlacement += RestTimer;
+    }
 
     void Update()
     {
@@ -26,4 +32,10 @@ public class TimerManager : MonoBehaviour
 
         GameEvents.OnTimerTick?.Invoke(seconds);
     }
+
+    private void RestTimer()
+    {
+        timeRemaining = 60f;
+    }
+    
 }
