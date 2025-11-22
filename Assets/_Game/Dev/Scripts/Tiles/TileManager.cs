@@ -54,14 +54,14 @@ public class TileManager : MonoBehaviour
             rect.localScale = Vector3.one;
 
             //  Reset size
-            rect.sizeDelta = new Vector2(160, 160); // <— match your tile size
+            rect.sizeDelta = new Vector2(70, 70); // <— match your tile size
 
             //  Reset anchors
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            /*rect.anchorMin = new Vector2(0.5f, 0.5f);
             rect.anchorMax = new Vector2(0.5f, 0.5f);
 
             //  Reset pivot
-            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);*/
 
             //  Reactivate raycasts
             CanvasGroup cg = tile.GetComponent<CanvasGroup>();

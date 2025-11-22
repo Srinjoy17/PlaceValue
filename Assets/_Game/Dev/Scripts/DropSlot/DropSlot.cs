@@ -22,7 +22,7 @@ public class DropSlot : MonoBehaviour
             tile.transform.SetParent(transform);
 
             RectTransform r = tile.GetComponent<RectTransform>();
-            NormalizeTileRectTransform(r, new Vector2(160, 160));
+            NormalizeTileRectTransform(r, new Vector2(70, 70));
 
             tile.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
