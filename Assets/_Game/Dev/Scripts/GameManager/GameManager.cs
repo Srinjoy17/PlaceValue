@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
         if (filledSlots >= requiredSlots)
         {
             Debug.Log("QUESTION COMPLETE!");
+            GameEvents.OnCorrectPlacement.Invoke();
             Invoke("NextQuestion", 1f);
         }
     }
