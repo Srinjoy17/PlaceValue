@@ -95,7 +95,8 @@ public class TileManager : MonoBehaviour
             if (tile == null) continue;
 
             tile.gameObject.SetActive(true);
-            tile.SetValue(digits[i]);
+            tile.SetDigit(digits[i], i);   
+
         }
     }
 }

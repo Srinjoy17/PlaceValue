@@ -226,7 +226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00:60
+  m_text: 01:45
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -1028,11 +1028,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7457865718ee4304c92471532bcce32b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileSpawner
-  tileStartParent: {fileID: 7110032620700251714}
-  tileGreen: {fileID: 7110032620700251718}
-  tilePink: {fileID: 7110032620700251717}
-  tileYellow: {fileID: 7110032620700251716}
-  tileBlue: {fileID: 7110032620700251715}
+  tileStartParent: {fileID: 1729912570}
+  tileGreen: {fileID: 3979136602503218428}
+  tilePink: {fileID: 4220803238917461937}
+  tileYellow: {fileID: 960533034328183058}
+  tileBlue: {fileID: 2870820869367014750}
 --- !u!1 &589479392
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,7 +1391,6 @@ MonoBehaviour:
   slotManager: {fileID: 1957851485}
   tileManager: {fileID: 567082118}
   gameOverManager: {fileID: 1162718230}
-  timerManager: {fileID: 322181452}
 --- !u!1 &1162718228
 GameObject:
   m_ObjectHideFlags: 0
@@ -1962,6 +1961,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1665164996}
   m_CullTransparentMesh: 1
+--- !u!224 &1729912570 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 586096600189655258, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
+  m_PrefabInstance: {fileID: 7110032620700251713}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1865434977
 GameObject:
   m_ObjectHideFlags: 0
@@ -2075,7 +2079,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc17f6a6343434246812407a7c607720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotSpawner
-  tutorialMode: 0
   slotTenThousands: {fileID: 4217752263516883934}
   slotThousands: {fileID: 9126195638740301359}
   slotHundreds: {fileID: 8237368757576706133}
@@ -2654,6 +2657,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2106928913}
   m_CullTransparentMesh: 1
+--- !u!114 &960533034328183058 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8070335409280771923, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
+  m_PrefabInstance: {fileID: 7110032620700251713}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
 --- !u!1001 &1837946383376096786
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2694,22 +2708,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -42.4625
       objectReference: {fileID: 0}
-    - target: {fileID: 3397618176513800834, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: isTutorialSlot
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3397618176513800834, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: slotBackground
-      value: 
-      objectReference: {fileID: 1837946383376096790}
-    - target: {fileID: 3799543722477778069, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: isTutorialSlot
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3799543722477778069, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: slotBackground
-      value: 
-      objectReference: {fileID: 1837946383376096788}
     - target: {fileID: 4509817251548822582, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -2726,22 +2724,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -42.4625
       objectReference: {fileID: 0}
-    - target: {fileID: 4906475916407703193, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: isTutorialSlot
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4906475916407703193, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: slotBackground
-      value: 
-      objectReference: {fileID: 1837946383376096791}
-    - target: {fileID: 6346714460159558336, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: isTutorialSlot
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6346714460159558336, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: slotBackground
-      value: 
-      objectReference: {fileID: 1837946383376096787}
     - target: {fileID: 6354456987873241313, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
       propertyPath: m_ChildScaleHeight
       value: 1
@@ -2846,14 +2828,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -42.4625
       objectReference: {fileID: 0}
-    - target: {fileID: 8267352114187923427, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: isTutorialSlot
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8267352114187923427, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      propertyPath: slotBackground
-      value: 
-      objectReference: {fileID: 1837946383376096789}
     - target: {fileID: 8918703422670727467, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -2874,138 +2848,56 @@ PrefabInstance:
     - {fileID: 6354456987873241313, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2524765846956316108, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4217752263516883935}
-    - targetCorrespondingSourceObject: {fileID: 7433033868318156861, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9126195638740301360}
-    - targetCorrespondingSourceObject: {fileID: 7768904257026799175, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8237368757576706134}
-    - targetCorrespondingSourceObject: {fileID: 2475697875470904553, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4312971140298011388}
-    - targetCorrespondingSourceObject: {fileID: 4852639106860115455, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6546470180791811054}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
---- !u!114 &1837946383376096787 stripped
+--- !u!114 &2870820869367014750 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6959928048906007507, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-  m_PrefabInstance: {fileID: 1837946383376096786}
+  m_CorrespondingSourceObject: {fileID: 5007119472698397471, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
+  m_PrefabInstance: {fileID: 7110032620700251713}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6546470180791811053}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &1837946383376096788 stripped
+  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
+--- !u!114 &3979136602503218428 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6795965696476172389, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-  m_PrefabInstance: {fileID: 1837946383376096786}
+  m_CorrespondingSourceObject: {fileID: 6166363948509737661, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
+  m_PrefabInstance: {fileID: 7110032620700251713}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4312971140298011387}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &1837946383376096789 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4318024993373065917, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-  m_PrefabInstance: {fileID: 1837946383376096786}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8237368757576706133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &1837946383376096790 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1681108695234948835, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-  m_PrefabInstance: {fileID: 1837946383376096786}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126195638740301359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &1837946383376096791 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4924623690434171358, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
-  m_PrefabInstance: {fileID: 1837946383376096786}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4217752263516883934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
 --- !u!1 &4217752263516883934 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2524765846956316108, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
   m_PrefabInstance: {fileID: 1837946383376096786}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4217752263516883935
+--- !u!114 &4220803238917461937 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6357014293299945968, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
+  m_PrefabInstance: {fileID: 7110032620700251713}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4217752263516883934}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
-  m_EffectDistance: {x: 5, y: 5}
-  m_UseGraphicAlpha: 1
+  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
 --- !u!1 &4312971140298011387 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2475697875470904553, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
   m_PrefabInstance: {fileID: 1837946383376096786}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4312971140298011388
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4312971140298011387}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
-  m_EffectDistance: {x: 5, y: 5}
-  m_UseGraphicAlpha: 1
 --- !u!1 &6546470180791811053 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4852639106860115455, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
   m_PrefabInstance: {fileID: 1837946383376096786}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6546470180791811054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6546470180791811053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
-  m_EffectDistance: {x: 5, y: 5}
-  m_UseGraphicAlpha: 1
 --- !u!1001 &7110032620700251713
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3103,75 +2995,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
---- !u!224 &7110032620700251714 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 586096600189655258, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
-  m_PrefabInstance: {fileID: 7110032620700251713}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7110032620700251715 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5007119472698397471, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
-  m_PrefabInstance: {fileID: 7110032620700251713}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
---- !u!114 &7110032620700251716 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8070335409280771923, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
-  m_PrefabInstance: {fileID: 7110032620700251713}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
---- !u!114 &7110032620700251717 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6357014293299945968, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
-  m_PrefabInstance: {fileID: 7110032620700251713}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
---- !u!114 &7110032620700251718 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6166363948509737661, guid: b471e5bc83c2bc34491cccb804226f32, type: 3}
-  m_PrefabInstance: {fileID: 7110032620700251713}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 904a0095d66478b46ac978cfd35a18c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileDrag
 --- !u!1 &8237368757576706133 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7768904257026799175, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
   m_PrefabInstance: {fileID: 1837946383376096786}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8237368757576706134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8237368757576706133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
-  m_EffectDistance: {x: 5, y: 5}
-  m_UseGraphicAlpha: 1
 --- !u!224 &8434007724853758647 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7821115553230591141, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
@@ -3187,21 +3015,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7433033868318156861, guid: 826b7cd334e596941bd191389cfc5c0f, type: 3}
   m_PrefabInstance: {fileID: 1837946383376096786}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9126195638740301360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126195638740301359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
-  m_EffectDistance: {x: 5, y: 5}
-  m_UseGraphicAlpha: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

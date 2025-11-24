@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using TMPro;
 
@@ -6,12 +6,12 @@ public class TimerManager : MonoBehaviour
 {
     public TMP_Text timerText;
 
-    private float timeRemaining = 60f; // 1 minute
+    private float timeRemaining = 60f;
     private bool running = true;
 
     private void Start()
     {
-        GameEvents.OnCorrectPlacement += RestTimer;
+        GameEvents.OnCorrectPlacement += ResetTimer;
     }
 
     void Update()
@@ -33,9 +33,21 @@ public class TimerManager : MonoBehaviour
         GameEvents.OnTimerTick?.Invoke(seconds);
     }
 
-    private void RestTimer()
+    // ---------------------------------------------------
+    //  Always reset timer to 60 seconds
+    // Called by GameManager on every new question
+    // ---------------------------------------------------
+    public void ResetTimer()
     {
         timeRemaining = 60f;
+        running = true;   // ensure timer continues running
     }
-    
+
+    // ---------------------------------------------------
+    //  Only used when game is finished or lost
+    // ---------------------------------------------------
+    public void StopTimer()
+    {
+        running = false;
+    }
 }

@@ -24,7 +24,6 @@ public class HealthManager : MonoBehaviour
         GameEvents.OnHealthChanged -= UpdateHealthUI;
     }
 
-    // Called whenever tile is wrong
     void ReduceHealth()
     {
         health--;
@@ -37,7 +36,12 @@ public class HealthManager : MonoBehaviour
         }
     }
 
-    // Updates UI
+    public void ResetHealth()
+    {
+        health = 3;
+        GameEvents.OnHealthChanged?.Invoke(health);
+    }
+
     void UpdateHealthUI(int h)
     {
         heart1_On.SetActive(h >= 1);

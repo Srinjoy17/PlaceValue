@@ -17,6 +17,6 @@ public class ScoreUI : MonoBehaviour
 
     void UpdateScore(int scoreValue)
     {
-        scoreText.text = scoreValue.ToString();   // NO percentage symbol
+        scoreText.text = "Score:" +  scoreValue.ToString();   // NO percentage symbol
     }
 }

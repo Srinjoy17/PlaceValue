@@ -2,15 +2,17 @@
 using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TileDrag : MonoBehaviour,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public int value;
+    public int digitIndex; 
 
-    public float dragScale = 1.15f;       // scale while dragging
-    public float snapDuration = 0.15f;    // snap animation
-    public float returnDuration = 0.2f;   // bounce return
+    public float dragScale = 1.15f;
+    public float snapDuration = 0.15f;
+    public float returnDuration = 0.2f;
 
     private Canvas canvas;
     private CanvasGroup cg;
@@ -19,6 +21,8 @@ public class TileDrag : MonoBehaviour,
     private Transform originalParent;
     private Vector2 originalPosition;
     private Vector3 originalScale;
+  
+
 
     void Awake()
     {
@@ -34,6 +38,14 @@ public class TileDrag : MonoBehaviour,
         GetComponentInChildren<TMP_Text>().text = v.ToString();
     }
 
+    public void SetDigit(int v, int index)
+    {
+        value = v;
+        digitIndex = index;
+        GetComponentInChildren<TMP_Text>().text = v.ToString();
+    }
+
+
     // ============================================
     // DRAG START
     // ============================================
@@ -42,21 +54,24 @@ public class TileDrag : MonoBehaviour,
         originalParent = transform.parent;
         originalPosition = rect.anchoredPosition;
 
-        // IMPORTANT: disable raycasts so slot can be detected
         cg.blocksRaycasts = false;
         cg.interactable = false;
         cg.ignoreParentGroups = true;
 
-        // scale up on drag
+        AudioManager.Instance.PlaySFX("tile");
+
         LeanTween.scale(gameObject, originalScale * dragScale, 0.15f);
     }
 
     // ============================================
-    // DRAGGING (pixel perfect follow)
+    // DRAGGING
     // ============================================
     public void OnDrag(PointerEventData eventData)
     {
-        rect.position = eventData.position;   // PERFECT for ScreenSpace Overlay
+        rect.position = eventData.position;
+
+        // 🔥 TUTORIAL PREVIEW (highlight correct slot while dragging)
+        SlotManager.Instance.PreviewTutorial(value);
     }
 
     // ============================================
@@ -64,45 +79,59 @@ public class TileDrag : MonoBehaviour,
     // ============================================
     public void OnEndDrag(PointerEventData eventData)
     {
-        // re-enable for next drag
         cg.blocksRaycasts = true;
         cg.interactable = true;
         cg.ignoreParentGroups = false;
 
-        // detect slot under mouse
-        GameObject go = eventData.pointerCurrentRaycast.gameObject;
-        DropSlot slot = go?.GetComponent<DropSlot>() ??
-                        go?.GetComponentInParent<DropSlot>();
+        // Stop tutorial preview
+        SlotManager.Instance.ClearPreview();
 
+        // 🔥 FIXED SLOT DETECTION — real world solution
+        PointerEventData ped = new PointerEventData(EventSystem.current);
+        ped.position = Input.mousePosition;
+
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(ped, results);
+
+        DropSlot slot = null;
+
+        foreach (var r in results)
+        {
+            slot = r.gameObject.GetComponent<DropSlot>() ??
+                   r.gameObject.GetComponentInParent<DropSlot>();
+
+            if (slot != null)
+                break;
+        }
+
+        // If no slot found → return tile
         if (slot == null)
         {
-            // nothing under mouse ? return
             StartCoroutine(ReturnAnim());
             return;
         }
 
-        // valid slot but wrong value ? return
+        // Try placing tile
         if (!slot.AcceptTile(this))
         {
             StartCoroutine(ReturnAnim());
             return;
         }
 
-        // correct ? snap into slot
+        // Correct slot → snap in
         SnapIntoSlot(slot.transform);
     }
+
 
     // ============================================
     // SNAP ANIMATION
     // ============================================
     private void SnapIntoSlot(Transform targetSlot)
     {
-        // IMPORTANT: snap to the slot RECT, not the slot parent
         RectTransform slotRect = targetSlot.GetComponent<RectTransform>();
 
         transform.SetParent(targetSlot);
 
-        // THIS LINE FIXES THE SNAP IN MIDDLE ISSUE.
         rect.anchorMin = new Vector2(0.5f, 0.5f);
         rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
@@ -110,9 +139,8 @@ public class TileDrag : MonoBehaviour,
         rect.anchoredPosition = Vector2.zero;
     }
 
-
     // ============================================
-    // RETURN ANIMATION FOR WRONG DROP
+    // RETURN ANIMATION
     // ============================================
     private IEnumerator ReturnAnim()
     {
