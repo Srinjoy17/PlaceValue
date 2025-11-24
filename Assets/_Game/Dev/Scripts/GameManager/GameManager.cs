@@ -2,31 +2,43 @@
 
 public class GameManager : MonoBehaviour
 {
+    // Core managers assigned from Inspector
     public SlotManager slotManager;
     public TileManager tileManager;
     public GameOverManager gameOverManager;
     public TimerManager timerManager;
 
+    // Question flow
     private int currentQuestion = 0;
     private int totalQuestions = 5;
 
+    // Slot tracking per question
     private int filledSlots = 0;
     private int requiredSlots = 0;
 
+    // Stores the digits of the current question
     private int[] currentDigits;
 
-    private bool isTutorial = true;   // First question is tutorial
+    // Determines if the game is still in tutorial mode
+    private bool isTutorial = true;
 
 
+    // ----------------------------------------------------
+    // Enable event listeners
+    // ----------------------------------------------------
     void OnEnable()
     {
         GameEvents.OnTileCorrect += HandleCorrectTile;
         GameEvents.OnTileWrong += HandleWrongTile;
         GameEvents.OnGameOver += HandleGameOver;
 
+        // Hide game over UI at the beginning
         gameOverManager.gameObject.SetActive(false);
     }
 
+    // ----------------------------------------------------
+    // Remove listeners to avoid over-subscription
+    // ----------------------------------------------------
     void OnDisable()
     {
         GameEvents.OnTileCorrect -= HandleCorrectTile;
@@ -36,7 +48,7 @@ public class GameManager : MonoBehaviour
 
 
     // ----------------------------------------------------
-    // START
+    // Game entry point
     // ----------------------------------------------------
     void Start()
     {
@@ -45,33 +57,35 @@ public class GameManager : MonoBehaviour
 
 
     // ----------------------------------------------------
-    // 🔥 TUTORIAL QUESTION
+    // TUTORIAL — first question with fixed example digits
+    // Timer does NOT run during tutorial
     // ----------------------------------------------------
     void StartTutorial()
     {
         Debug.Log("TUTORIAL STARTED");
 
-        int[] tutorialDigits = { 4, 2 };   // dummy tutorial number
+        int[] tutorialDigits = { 4, 2 }; // Example digits for demonstration
 
         currentDigits = tutorialDigits;
         requiredSlots = tutorialDigits.Length;
         filledSlots = 0;
 
-        slotManager.tutorialMode = true; // enable tutorial preview
+        slotManager.tutorialMode = true; // Show preview arrows/guide
 
+        // Set up tutorial UI
         slotManager.SetupSlots(tutorialDigits);
         tileManager.SetupTiles(tutorialDigits);
 
-        // Timer must stay OFF during tutorial
-       
+        // Timer is intentionally disabled during tutorial
     }
 
 
     // ----------------------------------------------------
-    // 🔥 NORMAL QUESTIONS AFTER TUTORIAL
+    // Starts generating all normal questions after tutorial
     // ----------------------------------------------------
     void NextQuestion()
     {
+        // When all questions are completed → show WIN screen
         if (currentQuestion >= totalQuestions)
         {
             Debug.Log("GAME COMPLETE!");
@@ -82,27 +96,31 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.PlaySFX("win");
             return;
         }
+
+        // Restart timer per question
         timerManager.ResetTimer();
 
         currentQuestion++;
 
-        // Reset health for each new question
+        // Reset player health for each new question
         HealthManager hm = FindAnyObjectByType<HealthManager>();
         if (hm != null) hm.ResetHealth();
 
         Debug.Log("GENERATING QUESTION " + currentQuestion);
 
-        int digitCount = 2;
+        // Determine digit count based on level progression
+        int digitCount = 2; // Default
         if (currentQuestion == 3 || currentQuestion == 4) digitCount = 3;
         if (currentQuestion == 5) digitCount = 4;
 
+        // Generate and show the new question
         GenerateNumber(digitCount);
-
     }
 
 
     // ----------------------------------------------------
-    // GENERATE DIGITS
+    // Generate random digits for the current question
+    // Ensures digit[0] is never zero
     // ----------------------------------------------------
     void GenerateNumber(int digits)
     {
@@ -111,12 +129,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < digits; i++)
             currentDigits[i] = Random.Range(0, 10);
 
+        // Prevent numbers like 012 or 006
         if (currentDigits[0] == 0)
             currentDigits[0] = Random.Range(1, 10);
 
         requiredSlots = digits;
         filledSlots = 0;
 
+        // Update UI
         slotManager.SetupSlots(currentDigits);
         tileManager.SetupTiles(currentDigits);
 
@@ -125,37 +145,46 @@ public class GameManager : MonoBehaviour
 
 
     // ----------------------------------------------------
-    // CORRECT TILE HANDLER
+    // Handles correct tile placement
+    // Tutorial → completes without timer  
+    // Normal game → moves to next question
     // ----------------------------------------------------
     void HandleCorrectTile()
     {
         filledSlots++;
 
-        // Tutorial complete
+        // When tutorial is complete (all slots filled)
         if (isTutorial && filledSlots >= requiredSlots)
         {
             Debug.Log("TUTORIAL COMPLETE!");
 
             isTutorial = false;
             slotManager.tutorialMode = false;
+
+            // Remove preview markers
             slotManager.ClearPreview();
 
-            // After tutorial → Start Timer + first question
+            // Start normal game after a short delay
             Invoke("NextQuestion", 1f);
             return;
         }
 
-        // Normal question complete
+        // For normal gameplay
         if (filledSlots >= requiredSlots)
         {
+            // Notify timer to reset itself
             GameEvents.OnCorrectPlacement?.Invoke();
+
+            // Delay before going to the next question
             Invoke("NextQuestion", 1f);
         }
     }
 
 
     // ----------------------------------------------------
-    // WRONG TILE HANDLER
+    // Handles WRONG tile dropping
+    // Tutorial: NO health loss
+    // Normal game: health is reduced elsewhere
     // ----------------------------------------------------
     void HandleWrongTile()
     {
@@ -170,18 +199,21 @@ public class GameManager : MonoBehaviour
 
 
     // ----------------------------------------------------
-    // GAME OVER
+    // GAME OVER  
+    // Shows loss screen + stops timer
     // ----------------------------------------------------
     void HandleGameOver()
     {
         Debug.Log("GAME OVER");
 
+        // Activate game over UI
         gameOverManager.gameObject.SetActive(true);
         gameOverManager.GameLost();
 
+        // Play game over sound
         AudioManager.Instance.PlaySFX("lose");
 
-        // Stop timer instantly
+        // Stop countdown immediately
         timerManager.StopTimer();
     }
 }

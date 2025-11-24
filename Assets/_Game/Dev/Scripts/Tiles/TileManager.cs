@@ -2,39 +2,52 @@
 
 public class TileManager : MonoBehaviour
 {
-    public Transform tileStartParent;   // The LOWER tile holder panel
+    // Parent panel where all tiles return before each question
+    public Transform tileStartParent;
+
+    // Drag tile references assigned in the Inspector
     public TileDrag tileGreen;
     public TileDrag tilePink;
     public TileDrag tileYellow;
     public TileDrag tileBlue;
 
+    // Internal array for easy tile indexing (1–4)
     private TileDrag[] tileSlots;
+
+    // Stores each tile's original anchored position for perfect resetting
     private Vector2[] originalPositions;
 
     void Awake()
     {
+        // Create an indexed list of all tiles (0th index kept null intentionally)
         tileSlots = new TileDrag[]
         {
-            null,
-            tileGreen,
-            tilePink,
-            tileYellow,
-            tileBlue
+            null,        // Index 0 unused (makes indexing match your logic)
+            tileGreen,   // Index 1
+            tilePink,    // Index 2
+            tileYellow,  // Index 3
+            tileBlue     // Index 4
         };
 
-        // STORE ORIGINAL POSITIONS
+        // Store the starting anchored positions of each tile
         originalPositions = new Vector2[5];
 
         for (int i = 0; i < tileSlots.Length; i++)
         {
             if (tileSlots[i] != null)
-                originalPositions[i] = tileSlots[i].GetComponent<RectTransform>().anchoredPosition;
+            {
+                // Save each tile's original anchored UI position
+                originalPositions[i] = tileSlots[i]
+                    .GetComponent<RectTransform>()
+                    .anchoredPosition;
+            }
         }
     }
 
-    // ============================================
-    // RESET TILES BEFORE EACH QUESTION
-    // ============================================
+    // =====================================================
+    // RESET ALL TILES TO THEIR ORIGINAL STATE & POSITION
+    // Called before every question to ensure clean gameplay
+    // =====================================================
     public void ResetTiles()
     {
         for (int i = 0; i < tileSlots.Length; i++)
@@ -44,59 +57,56 @@ public class TileManager : MonoBehaviour
 
             RectTransform rect = tile.GetComponent<RectTransform>();
 
-            //  Reset parent
+            // Reset tile parent so it goes back to the lower panel
             tile.transform.SetParent(tileStartParent);
 
-            //  Reset anchored position
+            // Reset anchored position to its original saved value
             rect.anchoredPosition = originalPositions[i];
 
-            //  Reset scale
+            // Reset scale to default
             rect.localScale = Vector3.one;
 
-            //  Reset size
-            rect.sizeDelta = new Vector2(70, 70); // <— match your tile size
+            // Reset size (ensure consistent tile dimensions)
+            rect.sizeDelta = new Vector2(70, 70);
 
-            //  Reset anchors
-            /*rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-
-            //  Reset pivot
-            rect.pivot = new Vector2(0.5f, 0.5f);*/
-
-            //  Reactivate raycasts
+            // Restore raycast ability so tiles can be dragged again
             CanvasGroup cg = tile.GetComponent<CanvasGroup>();
             cg.blocksRaycasts = true;
             cg.interactable = true;
         }
     }
 
-
-    // =============================
-    // SETUP TILES FOR NEW QUESTION
-   
+    // =====================================================
+    // SETUP TILES BASED ON THE NUMBER OF DIGITS IN QUESTION
+    // Hides unused tiles and sets the visible tile values
+    // =====================================================
     public void SetupTiles(int[] digits)
     {
-        ResetTiles();  // <-- MOST IMPORTANT FIX
+        // Always reset tiles before configuring a new question
+        ResetTiles();
 
         int len = digits.Length;
 
+        // Hide all tiles initially
         tileGreen.gameObject.SetActive(false);
         tilePink.gameObject.SetActive(false);
         tileYellow.gameObject.SetActive(false);
         tileBlue.gameObject.SetActive(false);
 
+        // Align tiles properly based on how many digits exist
         int startIndex = 5 - len;
 
+        // Activate required tiles and assign digits
         for (int i = 0; i < len; i++)
         {
             int tileIndex = startIndex + i;
             TileDrag tile = tileSlots[tileIndex];
-
             if (tile == null) continue;
 
             tile.gameObject.SetActive(true);
-            tile.SetDigit(digits[i], i);   
 
+            // Set the number displayed + index for slot validation
+            tile.SetDigit(digits[i], i);
         }
     }
 }
