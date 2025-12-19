@@ -11,18 +11,19 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        //  Button Click Sound
+        // Button Click Sound
         AudioManager.Instance.PlaySFX("button");
 
-        //  Switch to Game BG before loading scene
+        // Switch to Game BG so that it continues into GameScene later
         AudioManager.Instance.PlayBG("game");
 
-        SceneManager.LoadScene("GameScene");
+        // Load Game Mode Selection Scene
+        SceneManager.LoadScene("GameModes");
     }
 
     public void ExitGame()
     {
-        //  Button Click Sound
+        // Button Click Sound
         AudioManager.Instance.PlaySFX("button");
 
         Application.Quit();
