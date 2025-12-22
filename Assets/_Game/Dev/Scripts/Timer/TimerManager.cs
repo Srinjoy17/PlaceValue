@@ -1,44 +1,47 @@
 ﻿using UnityEngine;
 using TMPro;
 
-public class TimerManager : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    public TMP_Text timerText;
-
-    private float timeRemaining = 60f;
-    private bool running = true;
-
-    void Update()
+    public class TimerManager : MonoBehaviour
     {
-        if (!running) return;
+        public TMP_Text timerText;
 
-        timeRemaining -= Time.deltaTime;
+        private float timeRemaining = 60f;
+        private bool running = true;
 
-        if (timeRemaining <= 0)
+        void Update()
         {
-            timeRemaining = 0;
-            running = false;
-            GameEvents.OnGameOver?.Invoke();
+            if (!running) return;
+
+            timeRemaining -= Time.deltaTime;
+
+            if (timeRemaining <= 0)
+            {
+                timeRemaining = 0;
+                running = false;
+                GameEvents.OnGameOver?.Invoke();
+            }
+
+            int seconds = Mathf.CeilToInt(timeRemaining);
+            timerText.text = "00:" + seconds.ToString("00");
         }
 
-        int seconds = Mathf.CeilToInt(timeRemaining);
-        timerText.text = "00:" + seconds.ToString("00");
-    }
+        public void ResetTimer()
+        {
+            timeRemaining = 60f;
+            running = true;
+        }
 
-    public void ResetTimer()
-    {
-        timeRemaining = 60f;
-        running = true;
-    }
+        public void StopTimer()
+        {
+            running = false;
+        }
 
-    public void StopTimer()
-    {
-        running = false;
-    }
-
-    // 🔥 THIS IS CRITICAL
-    public float GetTimeSpent()
-    {
-        return 60f - timeRemaining;
+        // 🔥 THIS IS CRITICAL
+        public float GetTimeSpent()
+        {
+            return 60f - timeRemaining;
+        }
     }
 }

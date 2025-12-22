@@ -4,104 +4,107 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
-public class CustomNumberUI : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    public GameObject panel;
-
-    [Header("Assign exactly 5 InputFields (order matters)")]
-    public List<TMP_InputField> inputFields;
-
-    private int activeIndex = 0;
-    private GameMode selectedMode;
-
-    void Start()
+    public class CustomNumberUI : MonoBehaviour
     {
-        panel.SetActive(false);
+        public GameObject panel;
 
-        // Disable all rows initially
-        for (int i = 0; i < inputFields.Count; i++)
-            inputFields[i].transform.parent.gameObject.SetActive(false);
-    }
+        [Header("Assign exactly 5 InputFields (order matters)")]
+        public List<TMP_InputField> inputFields;
 
-    // --------------------------------------------------
-    // OPEN FROM PRACTICE / TEST BUTTON
-    // --------------------------------------------------
-    public void Open(GameMode mode)
-    {
-        selectedMode = mode;
-        panel.SetActive(true);
+        private int activeIndex = 0;
+        private GameMode selectedMode;
 
-        // Reset all fields
-        for (int i = 0; i < inputFields.Count; i++)
+        void Start()
         {
-            inputFields[i].text = "";
-            inputFields[i].transform.parent.gameObject.SetActive(false);
+            panel.SetActive(false);
+
+            // Disable all rows initially
+            for (int i = 0; i < inputFields.Count; i++)
+                inputFields[i].transform.parent.gameObject.SetActive(false);
         }
 
-        // Activate first input
-        activeIndex = 0;
-        inputFields[0].transform.parent.gameObject.SetActive(true);
-
-        EventSystem.current.SetSelectedGameObject(inputFields[0].gameObject);
-        inputFields[0].ActivateInputField();
-    }
-
-    // --------------------------------------------------
-    // SPACE → ACTIVATE NEXT INPUT
-    // --------------------------------------------------
-    void Update()
-    {
-        if (!panel.activeSelf) return;
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        // --------------------------------------------------
+        // OPEN FROM PRACTICE / TEST BUTTON
+        // --------------------------------------------------
+        public void Open(GameMode mode)
         {
-            ActivateNextInput();
-        }
-    }
+            selectedMode = mode;
+            panel.SetActive(true);
 
-    void ActivateNextInput()
-    {
-        if (activeIndex >= inputFields.Count - 1)
-            return;
+            // Reset all fields
+            for (int i = 0; i < inputFields.Count; i++)
+            {
+                inputFields[i].text = "";
+                inputFields[i].transform.parent.gameObject.SetActive(false);
+            }
 
-        activeIndex++;
+            // Activate first input
+            activeIndex = 0;
+            inputFields[0].transform.parent.gameObject.SetActive(true);
 
-        GameObject row = inputFields[activeIndex].transform.parent.gameObject;
-        row.SetActive(true);
-
-        Canvas.ForceUpdateCanvases();
-
-        EventSystem.current.SetSelectedGameObject(inputFields[activeIndex].gameObject);
-        inputFields[activeIndex].ActivateInputField();
-
-        Debug.Log("Activated Input Index: " + activeIndex);
-    }
-
-    // --------------------------------------------------
-    // OK BUTTON
-    // --------------------------------------------------
-    public void Submit()
-    {
-        List<int> customNumbers = new List<int>();
-
-        for (int i = 0; i <= activeIndex; i++)
-        {
-            if (int.TryParse(inputFields[i].text, out int value))
-                customNumbers.Add(value);
+            EventSystem.current.SetSelectedGameObject(inputFields[0].gameObject);
+            inputFields[0].ActivateInputField();
         }
 
-        if (customNumbers.Count == 0)
+        // --------------------------------------------------
+        // SPACE → ACTIVATE NEXT INPUT
+        // --------------------------------------------------
+        void Update()
         {
-            Debug.LogWarning("No custom numbers entered");
-            return;
+            if (!panel.activeSelf) return;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                ActivateNextInput();
+            }
         }
 
-        // 🔥 MOST IMPORTANT LINE
-        GameModeManager.CurrentMode = selectedMode;
+        void ActivateNextInput()
+        {
+            if (activeIndex >= inputFields.Count - 1)
+                return;
 
-        // Start session
-        GameSessionManager.Instance.StartSession(selectedMode, customNumbers);
+            activeIndex++;
 
-        SceneManager.LoadScene("GameScene");
+            GameObject row = inputFields[activeIndex].transform.parent.gameObject;
+            row.SetActive(true);
+
+            Canvas.ForceUpdateCanvases();
+
+            EventSystem.current.SetSelectedGameObject(inputFields[activeIndex].gameObject);
+            inputFields[activeIndex].ActivateInputField();
+
+            Debug.Log("Activated Input Index: " + activeIndex);
+        }
+
+        // --------------------------------------------------
+        // OK BUTTON
+        // --------------------------------------------------
+        public void Submit()
+        {
+            List<int> customNumbers = new List<int>();
+
+            for (int i = 0; i <= activeIndex; i++)
+            {
+                if (int.TryParse(inputFields[i].text, out int value))
+                    customNumbers.Add(value);
+            }
+
+            if (customNumbers.Count == 0)
+            {
+                Debug.LogWarning("No custom numbers entered");
+                return;
+            }
+
+            // 🔥 MOST IMPORTANT LINE
+            GameModeManager.CurrentMode = selectedMode;
+
+            // Start session
+            GameSessionManager.Instance.StartSession(selectedMode, customNumbers);
+
+            SceneManager.LoadScene("GameScene");
+        }
     }
 }

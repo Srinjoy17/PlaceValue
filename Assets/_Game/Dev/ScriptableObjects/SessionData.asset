@@ -13,12 +13,21 @@ MonoBehaviour:
   m_Name: SessionData
   m_EditorClassIdentifier: Assembly-CSharp::SessionDataSO
   logs:
-  - studentName: Srinjoy
-    sessionId: 1
+  - studentName: 
+    sessionId: f59f1588-2cd6-4f23-b6c8-9c725d586774
     mode: 0
-    questionIndex: 0
-    targetNumber: 0
-    isCorrect: 0
+    questionIndex: 1
+    targetNumber: 22
+    isCorrect: 1
     wrongAttempts: 0
     timeTaken: 0
-    timestamp: 1
+    timestamp: 2025-12-21 01:34:19
+  - studentName: 
+    sessionId: 2286774
+    mode: 1
+    questionIndex: 2
+    targetNumber: 32
+    isCorrect: 1
+    wrongAttempts: 0
+    timeTaken: 0
+    timestamp: 2025-12-21 01:34:23

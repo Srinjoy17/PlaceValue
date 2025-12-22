@@ -1,72 +1,75 @@
 ﻿using UnityEngine;
 
-public class SlotManager : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    public static SlotManager Instance;
-
-    public bool tutorialMode = false;
-
-    public GameObject slotTenThousands;
-    public GameObject slotThousands;
-    public GameObject slotHundreds;
-    public GameObject slotTens;
-    public GameObject slotOnes;
-
-    private DropSlot[] slots;
-
-    void Awake()
+    public class SlotManager : MonoBehaviour
     {
-        Instance = this;
+        public static SlotManager Instance;
 
-        slots = new DropSlot[]
+        public bool tutorialMode = false;
+
+        public GameObject slotTenThousands;
+        public GameObject slotThousands;
+        public GameObject slotHundreds;
+        public GameObject slotTens;
+        public GameObject slotOnes;
+
+        private DropSlot[] slots;
+
+        void Awake()
         {
-            slotTenThousands.GetComponent<DropSlot>(),
-            slotThousands.GetComponent<DropSlot>(),
-            slotHundreds.GetComponent<DropSlot>(),
-            slotTens.GetComponent<DropSlot>(),
-            slotOnes.GetComponent<DropSlot>()
-        };
-    }
+            Instance = this;
 
-    public void SetupSlots(int[] digits)
-    {
-        int len = digits.Length;
-        int start = 5 - len;
-
-        // Reset all slots first
-        for (int i = 0; i < slots.Length; i++)
-        {
-            slots[i].SetExpectedValue(-999);
-            slots[i].slotIndex = -1;
+            slots = new DropSlot[]
+            {
+                slotTenThousands.GetComponent<DropSlot>(),
+                slotThousands.GetComponent<DropSlot>(),
+                slotHundreds.GetComponent<DropSlot>(),
+                slotTens.GetComponent<DropSlot>(),
+                slotOnes.GetComponent<DropSlot>()
+            };
         }
 
-        // Assign expected digit + correct slotIndex
-        for (int i = 0; i < len; i++)
+        public void SetupSlots(int[] digits)
         {
-            int slotID = start + i;
+            int len = digits.Length;
+            int start = 5 - len;
 
-            slots[slotID].SetExpectedValue(digits[i]);
-            slots[slotID].slotIndex = i;  // <--- SUPER IMPORTANT FIX
+            // Reset all slots first
+            for (int i = 0; i < slots.Length; i++)
+            {
+                slots[i].SetExpectedValue(-999);
+                slots[i].slotIndex = -1;
+            }
+
+            // Assign expected digit + correct slotIndex
+            for (int i = 0; i < len; i++)
+            {
+                int slotID = start + i;
+
+                slots[slotID].SetExpectedValue(digits[i]);
+                slots[slotID].slotIndex = i;  // <--- SUPER IMPORTANT FIX
+            }
         }
-    }
 
-    // Tutorial glow preview
-    public void PreviewTutorial(int number)
-    {
-        if (!tutorialMode) return;
-
-        foreach (DropSlot s in slots)
+        // Tutorial glow preview
+        public void PreviewTutorial(int number)
         {
-            if (s.ExpectedValue == number)
-                s.ShowTutorialGlow();
-            else
+            if (!tutorialMode) return;
+
+            foreach (DropSlot s in slots)
+            {
+                if (s.ExpectedValue == number)
+                    s.ShowTutorialGlow();
+                else
+                    s.ClearTutorialGlow();
+            }
+        }
+
+        public void ClearPreview()
+        {
+            foreach (DropSlot s in slots)
                 s.ClearTutorialGlow();
         }
-    }
-
-    public void ClearPreview()
-    {
-        foreach (DropSlot s in slots)
-            s.ClearTutorialGlow();
     }
 }

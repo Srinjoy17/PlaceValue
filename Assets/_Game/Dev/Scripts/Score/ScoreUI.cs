@@ -1,22 +1,25 @@
 using TMPro;
 using UnityEngine;
 
-public class ScoreUI : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    public TextMeshProUGUI scoreText;
-
-    void OnEnable()
+    public class ScoreUI : MonoBehaviour
     {
-        GameEvents.OnScoreUpdated += UpdateScore;
-    }
+        public TextMeshProUGUI scoreText;
 
-    void OnDisable()
-    {
-        GameEvents.OnScoreUpdated -= UpdateScore;
-    }
+        void OnEnable()
+        {
+            GameEvents.OnScoreUpdated += UpdateScore;
+        }
 
-    void UpdateScore(int scoreValue)
-    {
-        scoreText.text = "Score:" +  scoreValue.ToString();   // NO percentage symbol
+        void OnDisable()
+        {
+            GameEvents.OnScoreUpdated -= UpdateScore;
+        }
+
+        void UpdateScore(int scoreValue)
+        {
+            scoreText.text = "Score:" + scoreValue.ToString();   // NO percentage symbol
+        }
     }
 }

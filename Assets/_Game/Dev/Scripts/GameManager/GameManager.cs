@@ -2,271 +2,284 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    // Core managers assigned from Inspector
-    public SlotManager slotManager;
-    public TileManager tileManager;
-    public GameOverManager gameOverManager;
-    public TimerManager timerManager;
-
-    public GameObject timerUI;
-    public GameObject healthUI;
-    public GameObject scoreUI;
-
-    private int currentQuestion = 0;
-    private int totalQuestions = 5;
-
-    private int filledSlots = 0;
-    private int requiredSlots = 0;
-    private int[] currentDigits;
-
-    private bool isTutorial = true;
-
-    // PRACTICE MODE CHECK
-    private bool isPractice => GameModeManager.CurrentMode == GameMode.Practice;
-    private List<int> customList => GameSessionManager.Instance.customQuestions;
-    private bool hasCustomNumbers => customList != null && customList.Count > 0;
-
-    // ----------------------------------------------------
-    // EVENT LISTENERS
-    // ----------------------------------------------------
-    void OnEnable()
+    public class GameManager : MonoBehaviour
     {
-        GameEvents.OnTileCorrect += HandleCorrectTile;
-        GameEvents.OnTileWrong += HandleWrongTile;
-        GameEvents.OnGameOver += HandleGameOver;
+        // Core managers assigned from Inspector
+        public SlotManager slotManager;
+        public TileManager tileManager;
+        public GameOverManager gameOverManager;
+        public TimerManager timerManager;
 
-        gameOverManager.gameObject.SetActive(false);
-    }
+        public GameObject timerUI;
+        public GameObject healthUI;
+        public GameObject scoreUI;
 
-    void OnDisable()
-    {
-        GameEvents.OnTileCorrect -= HandleCorrectTile;
-        GameEvents.OnTileWrong -= HandleWrongTile;
-        GameEvents.OnGameOver -= HandleGameOver;
-    }
+        private int currentQuestion = 0;
+        private int totalQuestions = 5;
 
-    // ----------------------------------------------------
-    // GAME START
-    // ----------------------------------------------------
-    void Start()
-    {
-        // 🔥 Start new session for Test mode
-        GameSessionManager.Instance.StartSession(
-            GameModeManager.CurrentMode,
-            hasCustomNumbers ? customList : null
-        );
+        private int filledSlots = 0;
+        private int requiredSlots = 0;
+        private int[] currentDigits;
 
-        // Practice mode UI handling
-        if (isPractice)
+        private bool isTutorial = true;
+
+        // PRACTICE MODE CHECK
+        private bool isPractice => GameModeManager.CurrentMode == GameMode.Practice;
+        private List<int> customList => GameSessionManager.Instance.customQuestions;
+        private bool hasCustomNumbers => customList != null && customList.Count > 0;
+
+        // ----------------------------------------------------
+        // EVENT LISTENERS
+        // ----------------------------------------------------
+        void OnEnable()
         {
-            timerUI.SetActive(false);
-            healthUI.SetActive(false);
-            scoreUI?.SetActive(false);
-            timerManager.StopTimer();
+            GameEvents.OnTileCorrect += HandleCorrectTile;
+            GameEvents.OnTileWrong += HandleWrongTile;
+            GameEvents.OnGameOver += HandleGameOver;
+
+            gameOverManager.gameObject.SetActive(false);
         }
 
-        StartTutorial();
-    }
-
-    // ----------------------------------------------------
-    // TUTORIAL
-    // ----------------------------------------------------
-    void StartTutorial()
-    {
-        int[] tutorialDigits = { 4, 2 };
-
-        currentDigits = tutorialDigits;
-        requiredSlots = tutorialDigits.Length;
-        filledSlots = 0;
-
-        slotManager.tutorialMode = true;
-        slotManager.SetupSlots(tutorialDigits);
-        tileManager.SetupTiles(tutorialDigits);
-    }
-
-    // ----------------------------------------------------
-    // NEXT QUESTION
-    // ----------------------------------------------------
-    void NextQuestion()
-    {
-        if (hasCustomNumbers)
-            totalQuestions = customList.Count;
-
-        if (currentQuestion >= totalQuestions)
+        void OnDisable()
         {
+            GameEvents.OnTileCorrect -= HandleCorrectTile;
+            GameEvents.OnTileWrong -= HandleWrongTile;
+            GameEvents.OnGameOver -= HandleGameOver;
+        }
+
+        // ----------------------------------------------------
+        // GAME START
+        // ----------------------------------------------------
+        void Start()
+        {
+            // Start session
+            GameSessionManager.Instance.StartSession(
+                GameModeManager.CurrentMode,
+                hasCustomNumbers ? customList : null
+            );
+
             if (isPractice)
             {
-                SceneManager.LoadScene("GameModes");
+                timerUI.SetActive(false);
+                healthUI.SetActive(false);
+                scoreUI?.SetActive(false);
+                timerManager.StopTimer();
+            }
+
+            StartTutorial();
+        }
+
+        // ----------------------------------------------------
+        // TUTORIAL
+        // ----------------------------------------------------
+        void StartTutorial()
+        {
+            int[] tutorialDigits = { 4, 2 };
+
+            currentDigits = tutorialDigits;
+            requiredSlots = tutorialDigits.Length;
+            filledSlots = 0;
+
+            slotManager.tutorialMode = true;
+            slotManager.SetupSlots(tutorialDigits);
+            tileManager.SetupTiles(tutorialDigits);
+        }
+
+        // ----------------------------------------------------
+        // NEXT QUESTION
+        // ----------------------------------------------------
+        void NextQuestion()
+        {
+            if (hasCustomNumbers)
+                totalQuestions = customList.Count;
+
+            if (currentQuestion >= totalQuestions)
+            {
+                if (isPractice)
+                {
+                    SceneManager.LoadScene("GameModes");
+                    return;
+                }
+
+                // WIN
+                gameOverManager.gameObject.SetActive(true);
+                gameOverManager.GameWon();
+                AudioManager.Instance.PlaySFX("win");
+
+                PrintDetailedDebugReport();
                 return;
             }
 
-            // ✅ WIN
-            gameOverManager.gameObject.SetActive(true);
-            gameOverManager.GameWon();
-            AudioManager.Instance.PlaySFX("win");
+            currentQuestion++;
 
-            PrintTestReportToConsole();
-            return;
+            if (!isPractice)
+                timerManager.ResetTimer();
+
+            if (hasCustomNumbers)
+                GenerateCustomNumber(customList[currentQuestion - 1]);
+            else
+            {
+                int digitCount = 2;
+                if (currentQuestion == 3 || currentQuestion == 4) digitCount = 3;
+                if (currentQuestion == 5) digitCount = 4;
+
+                GenerateRandomNumber(digitCount);
+            }
         }
 
-        currentQuestion++;
-
-        if (!isPractice)
-            timerManager.ResetTimer();
-
-        if (hasCustomNumbers)
-            GenerateCustomNumber(customList[currentQuestion - 1]);
-        else
+        // ----------------------------------------------------
+        // NUMBER GENERATION
+        // ----------------------------------------------------
+        void GenerateRandomNumber(int digits)
         {
-            int digitCount = 2;
-            if (currentQuestion == 3 || currentQuestion == 4) digitCount = 3;
-            if (currentQuestion == 5) digitCount = 4;
+            currentDigits = new int[digits];
 
-            GenerateRandomNumber(digitCount);
-        }
-    }
+            for (int i = 0; i < digits; i++)
+                currentDigits[i] = Random.Range(0, 10);
 
-    // ----------------------------------------------------
-    // NUMBER GENERATION
-    // ----------------------------------------------------
-    void GenerateRandomNumber(int digits)
-    {
-        currentDigits = new int[digits];
+            if (currentDigits[0] == 0)
+                currentDigits[0] = Random.Range(1, 10);
 
-        for (int i = 0; i < digits; i++)
-            currentDigits[i] = Random.Range(0, 10);
-
-        if (currentDigits[0] == 0)
-            currentDigits[0] = Random.Range(1, 10);
-
-        ApplyDigitsToGame();
-    }
-
-    void GenerateCustomNumber(int number)
-    {
-        string numStr = number.ToString();
-        currentDigits = new int[numStr.Length];
-
-        for (int i = 0; i < numStr.Length; i++)
-            currentDigits[i] = int.Parse(numStr[i].ToString());
-
-        ApplyDigitsToGame();
-    }
-
-    void ApplyDigitsToGame()
-    {
-        requiredSlots = currentDigits.Length;
-        filledSlots = 0;
-
-        slotManager.SetupSlots(currentDigits);
-        tileManager.SetupTiles(currentDigits);
-    }
-
-    // ----------------------------------------------------
-    // CORRECT TILE DROP
-    // ----------------------------------------------------
-    void HandleCorrectTile()
-    {
-        filledSlots++;
-
-        if (isTutorial && filledSlots >= requiredSlots)
-        {
-            isTutorial = false;
-            slotManager.tutorialMode = false;
-            slotManager.ClearPreview();
-
-            Invoke(nameof(NextQuestion), 1f);
-            return;
+            ApplyDigitsToGame();
         }
 
-        if (filledSlots >= requiredSlots)
+        void GenerateCustomNumber(int number)
         {
-            // 🔥 LOG CORRECT QUESTION
+            string numStr = number.ToString();
+            currentDigits = new int[numStr.Length];
+
+            for (int i = 0; i < numStr.Length; i++)
+                currentDigits[i] = int.Parse(numStr[i].ToString());
+
+            ApplyDigitsToGame();
+        }
+
+        void ApplyDigitsToGame()
+        {
+            requiredSlots = currentDigits.Length;
+            filledSlots = 0;
+
+            slotManager.SetupSlots(currentDigits);
+            tileManager.SetupTiles(currentDigits);
+        }
+
+        // ----------------------------------------------------
+        // CORRECT TILE DROP
+        // ----------------------------------------------------
+        void HandleCorrectTile()
+        {
+            filledSlots++;
+
+            if (isTutorial && filledSlots >= requiredSlots)
+            {
+                isTutorial = false;
+                slotManager.tutorialMode = false;
+                slotManager.ClearPreview();
+
+                Invoke(nameof(NextQuestion), 1f);
+                return;
+            }
+
+            if (filledSlots >= requiredSlots)
+            {
+                GameSessionManager.Instance.LogQuestion(
+                    currentQuestion,
+                    int.Parse(string.Join("", currentDigits)),
+                    true,
+                    0,
+                    timerManager.GetTimeSpent()
+                );
+
+                if (!isPractice)
+                    GameEvents.OnCorrectPlacement?.Invoke();
+
+                Invoke(nameof(NextQuestion), 1f);
+            }
+        }
+
+        // ----------------------------------------------------
+        // WRONG TILE DROP
+        // ----------------------------------------------------
+        void HandleWrongTile()
+        {
+            if (isTutorial || isPractice)
+                return;
+
             GameSessionManager.Instance.LogQuestion(
                 currentQuestion,
                 int.Parse(string.Join("", currentDigits)),
-                true,
-                0,
+                false,
+                1,
                 timerManager.GetTimeSpent()
             );
-
-            if (!isPractice)
-                GameEvents.OnCorrectPlacement?.Invoke();
-
-            Invoke(nameof(NextQuestion), 1f);
         }
-    }
 
-    // ----------------------------------------------------
-    // WRONG TILE DROP
-    // ----------------------------------------------------
-    void HandleWrongTile()
-    {
-        if (isTutorial || isPractice)
-            return;
-
-        // 🔥 LOG WRONG QUESTION
-        GameSessionManager.Instance.LogQuestion(
-            currentQuestion,
-            int.Parse(string.Join("", currentDigits)),
-            false,
-            1,
-            timerManager.GetTimeSpent()
-        );
-    }
-
-    // ----------------------------------------------------
-    // GAME OVER (LOSS)
-    // ----------------------------------------------------
-    void HandleGameOver()
-    {
-        if (isPractice)
-            return;
-
-        gameOverManager.gameObject.SetActive(true);
-        gameOverManager.GameLost();
-        AudioManager.Instance.PlaySFX("lose");
-
-        timerManager.StopTimer();
-
-        PrintTestReportToConsole();
-    }
-
-    // ----------------------------------------------------
-    // CONSOLE REPORT (FINAL)
-    // ----------------------------------------------------
-    void PrintTestReportToConsole()
-    {
-        var logs = GameSessionManager.Instance.sessionData.logs;
-
-        int attempted = logs.Count;
-        int correct = 0;
-        float totalTime = 0f;
-
-        foreach (var log in logs)
+        // ----------------------------------------------------
+        // GAME OVER (LOSS)
+        // ----------------------------------------------------
+        void HandleGameOver()
         {
-            if (log.isCorrect)
-                correct++;
+            if (isPractice)
+                return;
 
-            totalTime += log.timeTaken;
+            gameOverManager.gameObject.SetActive(true);
+            gameOverManager.GameLost();
+            AudioManager.Instance.PlaySFX("lose");
+
+            timerManager.StopTimer();
+
+            PrintDetailedDebugReport();
         }
 
-        int wrong = attempted - correct;
-        int score = correct * 20;
+        // ----------------------------------------------------
+        // DETAILED DEBUG CONSOLE REPORT
+        // ----------------------------------------------------
+        void PrintDetailedDebugReport()
+        {
+            var logs = GameSessionManager.Instance.sessionData.logs;
 
-        Debug.Log(
-            "\n====== TEST REPORT ======\n" +
-            $"Student Name : {GameSessionManager.Instance.studentName}\n" +
-            $"Mode         : {GameSessionManager.Instance.currentMode}\n" +
-            $"Total Ques   : {attempted}\n" +
-            $"Attempted    : {attempted}\n" +
-            $"Correct      : {correct}\n" +
-            $"Wrong        : {wrong}\n" +
-            $"Score        : {score}\n" +
-            $"Time Taken   : {Mathf.RoundToInt(totalTime)} sec\n" +
-            "========================="
-        );
+            int total = logs.Count;
+            int correct = 0;
+            float totalTime = 0f;
+
+            foreach (var log in logs)
+            {
+                if (log.isCorrect)
+                    correct++;
+
+                totalTime += log.timeTaken;
+            }
+
+            int wrong = total - correct;
+            float scorePercent = total > 0 ? (correct / (float)total) * 100f : 0f;
+
+            string report =
+                "\n========== GAME SCORE SUMMARY ==========\n" +
+                $"Score: {scorePercent:0}%\n" +
+                $"Active Time: {totalTime:0.00}s\n" +
+                $"Idle Time: 0s\n\n" +
+                $"Total Responses: {total}\n" +
+                $"Correct Answers: {correct}\n" +
+                $"Wrong Answers: {wrong}\n\n" +
+                "========== QUESTION BREAKDOWN ==========\n";
+
+            foreach (var log in logs)
+            {
+                report +=
+                    $"• Question {log.questionIndex}\n" +
+                    $"Question: Arrange in correct order\n" +
+                    $"Correct Answer: {log.targetNumber}\n" +
+                    $"Result: {(log.isCorrect ? "CORRECT" : "INCORRECT")}\n" +
+                    $"Response Time: {log.timeTaken:0.00}s\n" +
+                    $"Mistakes: {(log.isCorrect ? "None" : "Wrong answer selected")}\n" +
+                    "---------------------------------------\n";
+            }
+
+            report += "=======================================\n";
+
+            Debug.Log(report);
+        }
     }
 }

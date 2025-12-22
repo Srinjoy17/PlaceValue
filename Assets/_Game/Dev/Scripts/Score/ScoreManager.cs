@@ -1,61 +1,64 @@
 using UnityEngine;
 
-public class ScoreManager : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    private int correctCount = 0;
-    private int wrongCount = 0;
-
-    private int finalScore = 0;   // store plain number (0–100)
-
-    void OnEnable()
+    public class ScoreManager : MonoBehaviour
     {
-        GameEvents.OnTileCorrect += AddCorrect;
-        GameEvents.OnTileWrong += AddWrong;
-        GameEvents.OnGameOver += FinalizeScore;
-    }
+        private int correctCount = 0;
+        private int wrongCount = 0;
 
-    void OnDisable()
-    {
-        GameEvents.OnTileCorrect -= AddCorrect;
-        GameEvents.OnTileWrong -= AddWrong;
-        GameEvents.OnGameOver -= FinalizeScore;
-    }
+        private int finalScore = 0;   // store plain number (0–100)
 
-    // When tile is correct
-    void AddCorrect()
-    {
-        correctCount++;
-        UpdateScore();
-    }
+        void OnEnable()
+        {
+            GameEvents.OnTileCorrect += AddCorrect;
+            GameEvents.OnTileWrong += AddWrong;
+            GameEvents.OnGameOver += FinalizeScore;
+        }
 
-    // When tile is wrong
-    void AddWrong()
-    {
-        wrongCount++;
-        UpdateScore();
-    }
+        void OnDisable()
+        {
+            GameEvents.OnTileCorrect -= AddCorrect;
+            GameEvents.OnTileWrong -= AddWrong;
+            GameEvents.OnGameOver -= FinalizeScore;
+        }
 
-    // Score calculation (only number)
-    void UpdateScore()
-    {
-        int totalAttempts = correctCount + wrongCount;
+        // When tile is correct
+        void AddCorrect()
+        {
+            correctCount++;
+            UpdateScore();
+        }
 
-        if (totalAttempts == 0) return;
+        // When tile is wrong
+        void AddWrong()
+        {
+            wrongCount++;
+            UpdateScore();
+        }
 
-        finalScore = Mathf.RoundToInt((correctCount / (float)totalAttempts) * 100f);
+        // Score calculation (only number)
+        void UpdateScore()
+        {
+            int totalAttempts = correctCount + wrongCount;
 
-        GameEvents.OnScoreUpdated?.Invoke(finalScore); // send just number
-    }
+            if (totalAttempts == 0) return;
 
-    // Called when game ends
-    void FinalizeScore()
-    {
-        GameEvents.OnScoreFinal?.Invoke();
-        Debug.Log("Final Score: " + finalScore);
-    }
+            finalScore = Mathf.RoundToInt((correctCount / (float)totalAttempts) * 100f);
 
-    public int GetFinalScore()
-    {
-        return finalScore;   // no % sign
+            GameEvents.OnScoreUpdated?.Invoke(finalScore); // send just number
+        }
+
+        // Called when game ends
+        void FinalizeScore()
+        {
+            GameEvents.OnScoreFinal?.Invoke();
+            Debug.Log("Final Score: " + finalScore);
+        }
+
+        public int GetFinalScore()
+        {
+            return finalScore;   // no % sign
+        }
     }
 }

@@ -1,16 +1,19 @@
 using UnityEngine;
 
-public class GameModeUIButton : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    public CustomNumberUI form;   // Drag from inspector
-
-    public void PlayPractice()
+    public class GameModeUIButton : MonoBehaviour
     {
-        form.Open(GameMode.Practice);
-    }
+        public CustomNumberUI form;   // Drag from inspector
 
-    public void PlayTest()
-    {
-        form.Open(GameMode.Test);
+        public void PlayPractice()
+        {
+            form.Open(GameMode.Practice);
+        }
+
+        public void PlayTest()
+        {
+            form.Open(GameMode.Test);
+        }
     }
 }
