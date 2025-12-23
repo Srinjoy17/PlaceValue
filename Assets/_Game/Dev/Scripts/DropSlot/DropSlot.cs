@@ -9,10 +9,7 @@ namespace Eduzo.Games.PlaceValue
         // SLOT DATA
         // ----------------------------------------------------
 
-        // The digit this slot expects (0–9)
         public int ExpectedValue { get; private set; } = -999;
-
-        // Correct digit index (0..n-1)
         public int slotIndex = -1;
 
         private bool isFilled = false;
@@ -24,17 +21,21 @@ namespace Eduzo.Games.PlaceValue
         private Outline outline;
 
         [Header("Glow Settings")]
-        [Tooltip("Overall glow intensity")]
         public float glowSize = 20f;
-
-        [Tooltip("Glow expand animation duration")]
         public float glowExpandDuration = 0.18f;
-
-        [Tooltip("Glow shrink animation duration")]
         public float glowShrinkDuration = 0.18f;
-
-        [Tooltip("Stronger glow during tutorial preview")]
         public float tutorialGlowSize = 24f;
+
+        // ----------------------------------------------------
+        // 🔥 PARTICLE EFFECTS (NEW)
+        // ----------------------------------------------------
+
+        [Header("Particle Effects")]
+        public ParticleSystem correctParticle;
+        public ParticleSystem wrongParticle;
+
+        [Tooltip("Local offset for particle spawn")]
+        public Vector3 particleOffset = new Vector3(0f, 40f, 0f);
 
         // ----------------------------------------------------
         // UNITY
@@ -62,7 +63,7 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        // TUTORIAL GLOW (NO LEANTWEEN)
+        // TUTORIAL GLOW
         // ----------------------------------------------------
 
         public void ShowTutorialGlow()
@@ -83,17 +84,17 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        // TILE DROP LOGIC
+        // TILE DROP LOGIC (UNCHANGED)
         // ----------------------------------------------------
 
         public bool AcceptTile(TileDrag tile)
         {
             if (isFilled) return false;
 
-            // Slot not assigned → wrong
             if (ExpectedValue < 0)
             {
                 PlayGlow(new Color(1f, 0.2f, 0.2f));
+                PlayParticle(wrongParticle);
                 AudioManager.Instance?.PlaySFX("wrong");
                 GameEvents.OnTileWrong?.Invoke();
                 return false;
@@ -107,7 +108,9 @@ namespace Eduzo.Games.PlaceValue
             else
                 PlayGlow(new Color(1f, 0.2f, 0.2f));
 
-            // Correct placement
+            // ------------------------------------------------
+            // CORRECT PLACEMENT
+            // ------------------------------------------------
             if (valueMatches && indexMatches)
             {
                 isFilled = true;
@@ -120,19 +123,25 @@ namespace Eduzo.Games.PlaceValue
                 CanvasGroup cg = tile.GetComponent<CanvasGroup>();
                 if (cg != null) cg.blocksRaycasts = false;
 
+                // 🔥 PLAY CORRECT PARTICLE
+                PlayParticle(correctParticle);
+
                 AudioManager.Instance?.PlaySFX("correct");
                 GameEvents.OnTileCorrect?.Invoke();
                 return true;
             }
 
-            // Wrong placement
+            // ------------------------------------------------
+            // WRONG PLACEMENT
+            // ------------------------------------------------
+            PlayParticle(wrongParticle);
             AudioManager.Instance?.PlaySFX("wrong");
             GameEvents.OnTileWrong?.Invoke();
             return false;
         }
 
         // ----------------------------------------------------
-        // CONFIGURABLE GLOW (LEANTWEEN)
+        // CONFIGURABLE GLOW (LEAN TWEEN)
         // ----------------------------------------------------
 
         private void PlayGlow(Color color)
@@ -160,6 +169,27 @@ namespace Eduzo.Games.PlaceValue
                             outline.effectDistance = Vector2.zero;
                         });
                 });
+        }
+
+        // ----------------------------------------------------
+        // 🔥 PARTICLE PLAY (NEW)
+        // ----------------------------------------------------
+
+        private void PlayParticle(ParticleSystem particle)
+        {
+            if (particle == null) return;
+
+            ParticleSystem ps = Instantiate(
+                particle,
+                transform.position + particleOffset,
+                Quaternion.identity,
+                transform
+            );
+
+            ps.Play();
+
+            float life = ps.main.duration + ps.main.startLifetime.constantMax;
+            Destroy(ps.gameObject, life);
         }
 
         // ----------------------------------------------------

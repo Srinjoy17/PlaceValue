@@ -17,8 +17,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
     public AudioClip buttonClickSFX;
-    
-    public AudioClip tilePickSFX;  
+
+    public AudioClip tilePickSFX;
     public AudioClip winSFX;
     public AudioClip loseSFX;
 
@@ -39,7 +39,7 @@ public class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         LoadDictionaries();
-    
+
     }
 
     private void LoadDictionaries()
@@ -52,7 +52,7 @@ public class AudioManager : MonoBehaviour
         sfxDict["correct"] = correctSFX;
         sfxDict["wrong"] = wrongSFX;
         sfxDict["button"] = buttonClickSFX;
-       
+
 
         //  MISSING ONES (ADD THESE)
         sfxDict["tile"] = tilePickSFX;
@@ -82,7 +82,7 @@ public class AudioManager : MonoBehaviour
         bgSource.Stop();
     }
 
-   
+
     //  PLAY SOUND EFFECTS
     public void PlaySFX(string sfxName)
     {

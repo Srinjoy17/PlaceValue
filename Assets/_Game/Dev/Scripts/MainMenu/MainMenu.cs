@@ -3,30 +3,74 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [Header("Button Click Particle")]
+    public ParticleSystem buttonClickParticle;
+
+    [Tooltip("Delay to allow particle to play before action")]
+    public float actionDelay = 0.25f;
+
     void Start()
     {
         // Play Main Menu Background Music
         AudioManager.Instance.PlayBG("mainmenu");
     }
 
+    // ----------------------------------------------------
+    // PLAY GAME
+    // ----------------------------------------------------
     public void PlayGame()
     {
-        // Button Click Sound
         AudioManager.Instance.PlaySFX("button");
 
-        // Switch to Game BG so that it continues into GameScene later
+        PlayParticle();
+
+        // Switch to Game BG
         AudioManager.Instance.PlayBG("game");
 
-        // Load Game Mode Selection Scene
+        // Load scene after small delay
+        Invoke(nameof(LoadGameModes), actionDelay);
+    }
+
+    void LoadGameModes()
+    {
         SceneManager.LoadScene("GameModes");
     }
 
+    // ----------------------------------------------------
+    // EXIT GAME
+    // ----------------------------------------------------
     public void ExitGame()
     {
-        // Button Click Sound
         AudioManager.Instance.PlaySFX("button");
 
+        PlayParticle();
+
+        Invoke(nameof(QuitGame), actionDelay);
+    }
+
+    void QuitGame()
+    {
         Application.Quit();
         Debug.Log("GAME QUIT");
+    }
+
+    // ----------------------------------------------------
+    // PARTICLE SPAWN
+    // ----------------------------------------------------
+    void PlayParticle()
+    {
+        if (buttonClickParticle == null) return;
+
+        ParticleSystem ps = Instantiate(
+            buttonClickParticle,
+            transform.position,
+            Quaternion.identity,
+            transform.parent   // keeps it in UI hierarchy
+        );
+
+        ps.Play();
+
+        float life = ps.main.duration + ps.main.startLifetime.constantMax;
+        Destroy(ps.gameObject, life);
     }
 }
