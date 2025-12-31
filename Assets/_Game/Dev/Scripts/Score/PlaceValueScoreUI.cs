@@ -3,18 +3,18 @@ using UnityEngine;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class ScoreUI : MonoBehaviour
+    public class PlaceValueScoreUI : MonoBehaviour
     {
         public TextMeshProUGUI scoreText;
 
         void OnEnable()
         {
-            GameEvents.OnScoreUpdated += UpdateScore;
+            PlaceValueGameEvents.OnPlaceValueScoreUpdated += UpdateScore;
         }
 
         void OnDisable()
         {
-            GameEvents.OnScoreUpdated -= UpdateScore;
+            PlaceValueGameEvents.OnPlaceValueScoreUpdated -= UpdateScore;
         }
 
         void UpdateScore(int scoreValue)

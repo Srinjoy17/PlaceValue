@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "PlaceValue/Session Data", fileName = "SessionData")]
 public class SessionDataSO : ScriptableObject
 {
-    public List<QuestionLog> logs = new List<QuestionLog>();
+    public List<PlaceValueQuestionLog> logs = new List<PlaceValueQuestionLog>();
 
     public void Clear()
     {

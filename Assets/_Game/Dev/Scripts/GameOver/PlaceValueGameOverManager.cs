@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameOverManager : MonoBehaviour
+public class PlaceValueGameOverManager : MonoBehaviour
 {
     // UI references assigned through the Inspector
     [SerializeField] private GameObject gameWonImage;  // Shown when the player wins
@@ -19,7 +19,7 @@ public class GameOverManager : MonoBehaviour
     // Loads the MainMenu scene and resets the game flow
     private void RestartGame()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("PlaceValueMainMenu");
     }
 
     // Handles the "Game Won" state

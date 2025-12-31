@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum GameMode
+public enum PlaceValueGameMode
 {
     Practice,
     Test

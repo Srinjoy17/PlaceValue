@@ -2,9 +2,9 @@
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class SlotManager : MonoBehaviour
+    public class PlaceValueSlotManager : MonoBehaviour
     {
-        public static SlotManager Instance;
+        public static PlaceValueSlotManager Instance;
 
         public bool tutorialMode = false;
 
@@ -14,19 +14,19 @@ namespace Eduzo.Games.PlaceValue
         public GameObject slotTens;
         public GameObject slotOnes;
 
-        private DropSlot[] slots;
+        private PlaceValueDropSlot[] slots;
 
         void Awake()
         {
             Instance = this;
 
-            slots = new DropSlot[]
+            slots = new PlaceValueDropSlot[]
             {
-                slotTenThousands.GetComponent<DropSlot>(),
-                slotThousands.GetComponent<DropSlot>(),
-                slotHundreds.GetComponent<DropSlot>(),
-                slotTens.GetComponent<DropSlot>(),
-                slotOnes.GetComponent<DropSlot>()
+                slotTenThousands.GetComponent<PlaceValueDropSlot>(),
+                slotThousands.GetComponent<PlaceValueDropSlot>(),
+                slotHundreds.GetComponent<PlaceValueDropSlot>(),
+                slotTens.GetComponent<PlaceValueDropSlot>(),
+                slotOnes.GetComponent<PlaceValueDropSlot>()
             };
         }
 
@@ -57,7 +57,7 @@ namespace Eduzo.Games.PlaceValue
         {
             if (!tutorialMode) return;
 
-            foreach (DropSlot s in slots)
+            foreach (PlaceValueDropSlot s in slots)
             {
                 if (s.ExpectedValue == number)
                     s.ShowTutorialGlow();
@@ -68,7 +68,7 @@ namespace Eduzo.Games.PlaceValue
 
         public void ClearPreview()
         {
-            foreach (DropSlot s in slots)
+            foreach (PlaceValueDropSlot s in slots)
                 s.ClearTutorialGlow();
         }
     }

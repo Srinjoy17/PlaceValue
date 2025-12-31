@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class TileDrag : MonoBehaviour,
+    public class PlaceValueTileDrag : MonoBehaviour,
         IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public int value;
@@ -57,7 +57,7 @@ namespace Eduzo.Games.PlaceValue
             cg.interactable = false;
             cg.ignoreParentGroups = true;
 
-            AudioManager.Instance.PlaySFX("tile");
+            PlaceValueAudioManager.Instance.PlaySFX("tile");
 
             LeanTween.scale(gameObject, originalScale * dragScale, 0.15f);
         }
@@ -70,7 +70,7 @@ namespace Eduzo.Games.PlaceValue
             rect.position = eventData.position;
 
             // 🔥 TUTORIAL PREVIEW (highlight correct slot while dragging)
-            SlotManager.Instance.PreviewTutorial(value);
+            PlaceValueSlotManager.Instance.PreviewTutorial(value);
         }
 
         // ============================================
@@ -83,21 +83,21 @@ namespace Eduzo.Games.PlaceValue
             cg.ignoreParentGroups = false;
 
             // Stop tutorial preview
-            SlotManager.Instance.ClearPreview();
+             PlaceValueSlotManager.Instance.ClearPreview();
 
-            // 🔥 FIXED SLOT DETECTION — real world solution
+            //  FIXED SLOT DETECTION — real world solution
             PointerEventData ped = new PointerEventData(EventSystem.current);
             ped.position = Input.mousePosition;
 
             var results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(ped, results);
 
-            DropSlot slot = null;
+            PlaceValueDropSlot slot = null;
 
             foreach (var r in results)
             {
-                slot = r.gameObject.GetComponent<DropSlot>() ??
-                       r.gameObject.GetComponentInParent<DropSlot>();
+                slot = r.gameObject.GetComponent<PlaceValueDropSlot>() ??
+                       r.gameObject.GetComponentInParent<PlaceValueDropSlot>();
 
                 if (slot != null)
                     break;

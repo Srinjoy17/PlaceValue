@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class CustomNumberUI : MonoBehaviour
+    public class PlaceValueCustomNumberUI : MonoBehaviour
     {
         public GameObject panel;
 
@@ -14,7 +14,7 @@ namespace Eduzo.Games.PlaceValue
         public List<TMP_InputField> inputFields;
 
         private int activeIndex = 0;
-        private GameMode selectedMode;
+        private PlaceValueGameMode selectedMode;
 
         void Start()
         {
@@ -28,7 +28,7 @@ namespace Eduzo.Games.PlaceValue
         // --------------------------------------------------
         // OPEN FROM PRACTICE / TEST BUTTON
         // --------------------------------------------------
-        public void Open(GameMode mode)
+        public void Open(PlaceValueGameMode mode)
         {
             selectedMode = mode;
             panel.SetActive(true);
@@ -98,13 +98,13 @@ namespace Eduzo.Games.PlaceValue
                 return;
             }
 
-            // 🔥 MOST IMPORTANT LINE
-            GameModeManager.CurrentMode = selectedMode;
+            //  MOST IMPORTANT LINE
+            PlaceValueGameModeManager.CurrentMode = selectedMode;
 
             // Start session
-            GameSessionManager.Instance.StartSession(selectedMode, customNumbers);
+            PlaceValueGameSessionManager.Instance.StartSession(selectedMode, customNumbers);
 
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("PlaceValueGameScene");
         }
     }
 }

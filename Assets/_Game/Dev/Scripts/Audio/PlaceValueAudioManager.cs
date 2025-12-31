@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class AudioManager : MonoBehaviour
+public class PlaceValueAudioManager : MonoBehaviour
 {
-    public static AudioManager Instance;
+    public static PlaceValueAudioManager Instance;
 
     [Header("Audio Sources")]
     public AudioSource bgSource;

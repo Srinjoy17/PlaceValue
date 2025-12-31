@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf8655aa42d41f344a4a8d6d628f41a7, type: 3}
-  m_Name: SessionData
+  m_Name: PlaceValueSessionData
   m_EditorClassIdentifier: Assembly-CSharp::SessionDataSO
   logs:
   - studentName: 

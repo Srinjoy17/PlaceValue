@@ -1,11 +1,11 @@
 using System;
 
 [Serializable]
-public class QuestionLog
+public class PlaceValueQuestionLog
 {
     public string studentName;
     public string sessionId;
-    public GameMode mode;
+    public PlaceValueGameMode mode;
 
     public int questionIndex;     // 1..N in this session
     public int targetNumber;      // e.g. 482, 37, etc

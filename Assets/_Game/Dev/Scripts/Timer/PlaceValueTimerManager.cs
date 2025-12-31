@@ -3,7 +3,7 @@ using TMPro;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class TimerManager : MonoBehaviour
+    public class PlaceValueTimerManager : MonoBehaviour
     {
         public TMP_Text timerText;
 
@@ -20,7 +20,7 @@ namespace Eduzo.Games.PlaceValue
             {
                 timeRemaining = 0;
                 running = false;
-                GameEvents.OnGameOver?.Invoke();
+                PlaceValueGameEvents.OnPlaceValueGameOver?.Invoke();
             }
 
             int seconds = Mathf.CeilToInt(timeRemaining);

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class GameSessionManager : MonoBehaviour
+    public class PlaceValueGameSessionManager : MonoBehaviour
     {
-        public static GameSessionManager Instance;
+        public static PlaceValueGameSessionManager Instance;
 
         public SessionDataSO sessionData;
 
         public string studentName = "Student";
-        public GameMode currentMode;
+        public PlaceValueGameMode currentMode;
 
         public List<int> customQuestions = new List<int>();
         private string sessionId;
@@ -28,7 +28,7 @@ namespace Eduzo.Games.PlaceValue
             DontDestroyOnLoad(gameObject);
         }
 
-        public void StartSession(GameMode mode, List<int> customList = null)
+        public void StartSession(PlaceValueGameMode mode, List<int> customList = null)
         {
             currentMode = mode;
             sessionId = Guid.NewGuid().ToString();
@@ -51,7 +51,7 @@ namespace Eduzo.Games.PlaceValue
             float timeTaken
         )
         {
-            QuestionLog log = new QuestionLog
+            PlaceValueQuestionLog log = new PlaceValueQuestionLog
             {
                 sessionId = sessionId,
                 studentName = studentName,

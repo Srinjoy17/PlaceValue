@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class ScoreManager : MonoBehaviour
+    public class PlaceValueScoreManager : MonoBehaviour
     {
         private int correctCount = 0;
         private int wrongCount = 0;
@@ -11,16 +11,16 @@ namespace Eduzo.Games.PlaceValue
 
         void OnEnable()
         {
-            GameEvents.OnTileCorrect += AddCorrect;
-            GameEvents.OnTileWrong += AddWrong;
-            GameEvents.OnGameOver += FinalizeScore;
+            PlaceValueGameEvents.OnPlaceValueTileCorrect += AddCorrect;
+            PlaceValueGameEvents.OnPlaceValueTileWrong += AddWrong;
+            PlaceValueGameEvents.OnPlaceValueGameOver += FinalizeScore;
         }
 
         void OnDisable()
         {
-            GameEvents.OnTileCorrect -= AddCorrect;
-            GameEvents.OnTileWrong -= AddWrong;
-            GameEvents.OnGameOver -= FinalizeScore;
+            PlaceValueGameEvents.OnPlaceValueTileCorrect -= AddCorrect;
+            PlaceValueGameEvents.OnPlaceValueTileWrong -= AddWrong;
+            PlaceValueGameEvents.OnPlaceValueGameOver -= FinalizeScore;
         }
 
         // When tile is correct
@@ -46,13 +46,13 @@ namespace Eduzo.Games.PlaceValue
 
             finalScore = Mathf.RoundToInt((correctCount / (float)totalAttempts) * 100f);
 
-            GameEvents.OnScoreUpdated?.Invoke(finalScore); // send just number
+            PlaceValueGameEvents.OnPlaceValueScoreUpdated?.Invoke(finalScore); // send just number
         }
 
         // Called when game ends
         void FinalizeScore()
         {
-            GameEvents.OnScoreFinal?.Invoke();
+            PlaceValueGameEvents.OnPlaceValueScoreFinal?.Invoke();
             Debug.Log("Final Score: " + finalScore);
         }
 

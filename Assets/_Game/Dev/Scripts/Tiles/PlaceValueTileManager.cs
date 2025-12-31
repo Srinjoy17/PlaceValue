@@ -2,19 +2,19 @@
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class TileManager : MonoBehaviour
+    public class PlaceValueTileManager : MonoBehaviour
     {
         // Parent panel where all tiles return before each question
         public Transform tileStartParent;
 
         // Drag tile references assigned in the Inspector
-        public TileDrag tileGreen;
-        public TileDrag tilePink;
-        public TileDrag tileYellow;
-        public TileDrag tileBlue;
+        public PlaceValueTileDrag tileGreen;
+        public PlaceValueTileDrag tilePink;
+        public PlaceValueTileDrag tileYellow;
+        public PlaceValueTileDrag tileBlue;
 
         // Internal array for easy tile indexing (1–4)
-        private TileDrag[] tileSlots;
+        private PlaceValueTileDrag[] tileSlots;
 
         // Stores each tile's original anchored position for perfect resetting
         private Vector2[] originalPositions;
@@ -22,7 +22,7 @@ namespace Eduzo.Games.PlaceValue
         void Awake()
         {
             // Create an indexed list of all tiles (0th index kept null intentionally)
-            tileSlots = new TileDrag[]
+            tileSlots = new PlaceValueTileDrag[]
             {
                 null,        // Index 0 unused (makes indexing match your logic)
                 tileGreen,   // Index 1
@@ -53,7 +53,7 @@ namespace Eduzo.Games.PlaceValue
         {
             for (int i = 0; i < tileSlots.Length; i++)
             {
-                TileDrag tile = tileSlots[i];
+                PlaceValueTileDrag tile = tileSlots[i];
                 if (tile == null) continue;
 
                 RectTransform rect = tile.GetComponent<RectTransform>();
@@ -100,7 +100,7 @@ namespace Eduzo.Games.PlaceValue
             for (int i = 0; i < len; i++)
             {
                 int tileIndex = startIndex + i;
-                TileDrag tile = tileSlots[tileIndex];
+                PlaceValueTileDrag tile = tileSlots[tileIndex];
                 if (tile == null) continue;
 
                 tile.gameObject.SetActive(true);

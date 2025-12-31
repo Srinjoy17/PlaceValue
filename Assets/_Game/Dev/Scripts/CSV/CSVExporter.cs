@@ -35,12 +35,12 @@ namespace Eduzo.Games.PlaceValue
 
         public void ExportTestResult()
         {
-            var logs = GameSessionManager.Instance.sessionData.logs;
+            var logs = PlaceValueGameSessionManager.Instance.sessionData.logs;
             if (logs == null || logs.Count == 0) return;
 
             string runId = Guid.NewGuid().ToString();
-            string student = GameSessionManager.Instance.studentName;
-            string mode = GameSessionManager.Instance.currentMode.ToString();
+            string student = PlaceValueGameSessionManager.Instance.studentName;
+            string mode = PlaceValueGameSessionManager.Instance.currentMode.ToString();
 
             int attempted = logs.Count;
             int correct = logs.Count(l => l.isCorrect);

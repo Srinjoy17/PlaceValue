@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Eduzo.Games.PlaceValue
 {
-    public class DropSlot : MonoBehaviour
+    public class PlaceValueDropSlot : MonoBehaviour
     {
         // ----------------------------------------------------
         // SLOT DATA
@@ -87,7 +87,7 @@ namespace Eduzo.Games.PlaceValue
         // TILE DROP LOGIC (UNCHANGED)
         // ----------------------------------------------------
 
-        public bool AcceptTile(TileDrag tile)
+        public bool AcceptTile(PlaceValueTileDrag tile)
         {
             if (isFilled) return false;
 
@@ -95,8 +95,8 @@ namespace Eduzo.Games.PlaceValue
             {
                 PlayGlow(new Color(1f, 0.2f, 0.2f));
                 PlayParticle(wrongParticle);
-                AudioManager.Instance?.PlaySFX("wrong");
-                GameEvents.OnTileWrong?.Invoke();
+                PlaceValueAudioManager.Instance?.PlaySFX("wrong");
+                PlaceValueGameEvents.OnPlaceValueTileWrong?.Invoke();
                 return false;
             }
 
@@ -123,11 +123,11 @@ namespace Eduzo.Games.PlaceValue
                 CanvasGroup cg = tile.GetComponent<CanvasGroup>();
                 if (cg != null) cg.blocksRaycasts = false;
 
-                // 🔥 PLAY CORRECT PARTICLE
+                //  PLAY CORRECT PARTICLE
                 PlayParticle(correctParticle);
 
-                AudioManager.Instance?.PlaySFX("correct");
-                GameEvents.OnTileCorrect?.Invoke();
+                PlaceValueAudioManager.Instance?.PlaySFX("correct");
+                PlaceValueGameEvents.OnPlaceValueTileCorrect?.Invoke();
                 return true;
             }
 
@@ -135,8 +135,8 @@ namespace Eduzo.Games.PlaceValue
             // WRONG PLACEMENT
             // ------------------------------------------------
             PlayParticle(wrongParticle);
-            AudioManager.Instance?.PlaySFX("wrong");
-            GameEvents.OnTileWrong?.Invoke();
+            PlaceValueAudioManager.Instance?.PlaySFX("wrong");
+            PlaceValueGameEvents.OnPlaceValueTileWrong?.Invoke();
             return false;
         }
 
@@ -172,7 +172,7 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        // 🔥 PARTICLE PLAY (NEW)
+        //  PARTICLE PLAY (NEW)
         // ----------------------------------------------------
 
         private void PlayParticle(ParticleSystem particle)

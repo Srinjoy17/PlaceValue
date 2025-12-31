@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+public class PlaceValueMainMenu : MonoBehaviour
 {
     [Header("Button Click Particle")]
     public ParticleSystem buttonClickParticle;
@@ -12,7 +12,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         // Play Main Menu Background Music
-        AudioManager.Instance.PlayBG("mainmenu");
+        PlaceValueAudioManager.Instance.PlayBG("mainmenu");
     }
 
     // ----------------------------------------------------
@@ -20,12 +20,12 @@ public class MainMenu : MonoBehaviour
     // ----------------------------------------------------
     public void PlayGame()
     {
-        AudioManager.Instance.PlaySFX("button");
+        PlaceValueAudioManager.Instance.PlaySFX("button");
 
         PlayParticle();
 
         // Switch to Game BG
-        AudioManager.Instance.PlayBG("game");
+        PlaceValueAudioManager.Instance.PlayBG("game");
 
         // Load scene after small delay
         Invoke(nameof(LoadGameModes), actionDelay);
@@ -33,7 +33,7 @@ public class MainMenu : MonoBehaviour
 
     void LoadGameModes()
     {
-        SceneManager.LoadScene("GameModes");
+        SceneManager.LoadScene("PlaceValueGameModes");
     }
 
     // ----------------------------------------------------
@@ -41,7 +41,7 @@ public class MainMenu : MonoBehaviour
     // ----------------------------------------------------
     public void ExitGame()
     {
-        AudioManager.Instance.PlaySFX("button");
+        PlaceValueAudioManager.Instance.PlaySFX("button");
 
         PlayParticle();
 
