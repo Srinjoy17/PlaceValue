@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "PlaceValue/Session Data", fileName = "SessionData")]
-public class SessionDataSO : ScriptableObject
+namespace Eduzo.Games.PlaceValue
 {
-    public List<PlaceValueQuestionLog> logs = new List<PlaceValueQuestionLog>();
-
-    public void Clear()
+    [CreateAssetMenu(menuName = "PlaceValue/Session Data", fileName = "SessionData")]
+    public class SessionDataSO : ScriptableObject
     {
-        logs.Clear();
+        public List<PlaceValueQuestionLog> logs = new List<PlaceValueQuestionLog>();
+
+        public void Clear()
+        {
+            logs.Clear();
+        }
     }
 }

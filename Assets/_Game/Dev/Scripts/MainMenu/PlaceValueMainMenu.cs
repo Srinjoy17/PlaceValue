@@ -1,76 +1,79 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlaceValueMainMenu : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    [Header("Button Click Particle")]
-    public ParticleSystem buttonClickParticle;
-
-    [Tooltip("Delay to allow particle to play before action")]
-    public float actionDelay = 0.25f;
-
-    void Start()
+    public class PlaceValueMainMenu : MonoBehaviour
     {
-        // Play Main Menu Background Music
-        PlaceValueAudioManager.Instance.PlayBG("mainmenu");
-    }
+        [Header("Button Click Particle")]
+        public ParticleSystem buttonClickParticle;
 
-    // ----------------------------------------------------
-    // PLAY GAME
-    // ----------------------------------------------------
-    public void PlayGame()
-    {
-        PlaceValueAudioManager.Instance.PlaySFX("button");
+        [Tooltip("Delay to allow particle to play before action")]
+        public float actionDelay = 0.25f;
 
-        PlayParticle();
+        void Start()
+        {
+            // Play Main Menu Background Music
+            PlaceValueAudioManager.Instance.PlayBG("mainmenu");
+        }
 
-        // Switch to Game BG
-        PlaceValueAudioManager.Instance.PlayBG("game");
+        // ----------------------------------------------------
+        // PLAY GAME
+        // ----------------------------------------------------
+        public void PlayGame()
+        {
+            PlaceValueAudioManager.Instance.PlaySFX("button");
 
-        // Load scene after small delay
-        Invoke(nameof(LoadGameModes), actionDelay);
-    }
+            PlayParticle();
 
-    void LoadGameModes()
-    {
-        SceneManager.LoadScene("PlaceValueGameModes");
-    }
+            // Switch to Game BG
+            PlaceValueAudioManager.Instance.PlayBG("game");
 
-    // ----------------------------------------------------
-    // EXIT GAME
-    // ----------------------------------------------------
-    public void ExitGame()
-    {
-        PlaceValueAudioManager.Instance.PlaySFX("button");
+            // Load scene after small delay
+            Invoke(nameof(LoadGameModes), actionDelay);
+        }
 
-        PlayParticle();
+        void LoadGameModes()
+        {
+            SceneManager.LoadScene("PlaceValueGameModes");
+        }
 
-        Invoke(nameof(QuitGame), actionDelay);
-    }
+        // ----------------------------------------------------
+        // EXIT GAME
+        // ----------------------------------------------------
+        public void ExitGame()
+        {
+            PlaceValueAudioManager.Instance.PlaySFX("button");
 
-    void QuitGame()
-    {
-        Application.Quit();
-        Debug.Log("GAME QUIT");
-    }
+            PlayParticle();
 
-    // ----------------------------------------------------
-    // PARTICLE SPAWN
-    // ----------------------------------------------------
-    void PlayParticle()
-    {
-        if (buttonClickParticle == null) return;
+            Invoke(nameof(QuitGame), actionDelay);
+        }
 
-        ParticleSystem ps = Instantiate(
-            buttonClickParticle,
-            transform.position,
-            Quaternion.identity,
-            transform.parent   // keeps it in UI hierarchy
-        );
+        void QuitGame()
+        {
+            Application.Quit();
+            Debug.Log("GAME QUIT");
+        }
 
-        ps.Play();
+        // ----------------------------------------------------
+        // PARTICLE SPAWN
+        // ----------------------------------------------------
+        void PlayParticle()
+        {
+            if (buttonClickParticle == null) return;
 
-        float life = ps.main.duration + ps.main.startLifetime.constantMax;
-        Destroy(ps.gameObject, life);
+            ParticleSystem ps = Instantiate(
+                buttonClickParticle,
+                transform.position,
+                Quaternion.identity,
+                transform.parent   // keeps it in UI hierarchy
+            );
+
+            ps.Play();
+
+            float life = ps.main.duration + ps.main.startLifetime.constantMax;
+            Destroy(ps.gameObject, life);
+        }
     }
 }

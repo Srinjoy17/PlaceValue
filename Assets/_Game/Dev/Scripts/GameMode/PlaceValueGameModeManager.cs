@@ -1,4 +1,7 @@
-public static class PlaceValueGameModeManager
+namespace Eduzo.Games.PlaceValue
 {
-    public static PlaceValueGameMode CurrentMode = PlaceValueGameMode.Test;
+    public static class PlaceValueGameModeManager
+    {
+        public static PlaceValueGameMode CurrentMode = PlaceValueGameMode.Test;
+    }
 }
