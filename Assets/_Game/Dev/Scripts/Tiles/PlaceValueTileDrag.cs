@@ -9,8 +9,8 @@ namespace Eduzo.Games.PlaceValue
     public class PlaceValueTileDrag : MonoBehaviour,
         IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        public int value;
-        public int digitIndex;
+        public int value;        // digit value (0–9)
+        public int digitIndex;   // place index (0–4)
 
         public float dragScale = 1.15f;
         public float snapDuration = 0.15f;
@@ -32,18 +32,22 @@ namespace Eduzo.Games.PlaceValue
             originalScale = transform.localScale;
         }
 
-        public void SetValue(int v)
-        {
-            value = v;
-            GetComponentInChildren<TMP_Text>().text = v.ToString();
-        }
-
+        // ------------------------------------------------
+        // SET DIGIT (ONLY PLACE DIGITS ARE SET)
+        // ------------------------------------------------
         public void SetDigit(int v, int index)
         {
             value = v;
             digitIndex = index;
-            GetComponentInChildren<TMP_Text>().text = v.ToString();
+
+            TMP_Text txt = GetComponentInChildren<TMP_Text>();
+            txt.text = v.ToString();
+
+            Debug.Log(
+                $"SET DIGIT → Tile:{gameObject.name} | Value:{v} | Index:{index} | TextNow:{txt.text}"
+            );
         }
+
 
         // ============================================
         // DRAG START
@@ -69,8 +73,8 @@ namespace Eduzo.Games.PlaceValue
         {
             rect.position = eventData.position;
 
-            // 🔥 TUTORIAL PREVIEW (highlight correct slot while dragging)
-            PlaceValueSlotManager.Instance.PreviewTutorial(value);
+            // ✅ SAFE TUTORIAL PREVIEW (BY PLACE INDEX)
+            PlaceValueSlotManager.Instance.PreviewTutorialByIndex(digitIndex);
         }
 
         // ============================================
@@ -82,10 +86,8 @@ namespace Eduzo.Games.PlaceValue
             cg.interactable = true;
             cg.ignoreParentGroups = false;
 
-            // Stop tutorial preview
-             PlaceValueSlotManager.Instance.ClearPreview();
+            PlaceValueSlotManager.Instance.ClearPreview();
 
-            //  FIXED SLOT DETECTION — real world solution
             PointerEventData ped = new PointerEventData(EventSystem.current);
             ped.position = Input.mousePosition;
 
@@ -103,31 +105,18 @@ namespace Eduzo.Games.PlaceValue
                     break;
             }
 
-            // If no slot found → return tile
-            if (slot == null)
+            if (slot == null || !slot.AcceptTile(this))
             {
                 StartCoroutine(ReturnAnim());
                 return;
             }
 
-            // Try placing tile
-            if (!slot.AcceptTile(this))
-            {
-                StartCoroutine(ReturnAnim());
-                return;
-            }
-
-            // Correct slot → snap in
             SnapIntoSlot(slot.transform);
         }
 
         // ============================================
-        // SNAP ANIMATION
-        // ============================================
         private void SnapIntoSlot(Transform targetSlot)
         {
-            RectTransform slotRect = targetSlot.GetComponent<RectTransform>();
-
             transform.SetParent(targetSlot);
 
             rect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -137,8 +126,6 @@ namespace Eduzo.Games.PlaceValue
             rect.anchoredPosition = Vector2.zero;
         }
 
-        // ============================================
-        // RETURN ANIMATION
         // ============================================
         private IEnumerator ReturnAnim()
         {

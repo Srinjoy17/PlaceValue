@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
 
@@ -28,6 +28,9 @@ namespace Eduzo.Games.PlaceValue
             DontDestroyOnLoad(gameObject);
         }
 
+        // -----------------------------
+        // START SESSION
+        // -----------------------------
         public void StartSession(PlaceValueGameMode mode, List<int> customList = null)
         {
             currentMode = mode;
@@ -41,8 +44,23 @@ namespace Eduzo.Games.PlaceValue
                 customQuestions.Clear();
 
             Debug.Log("SESSION STARTED: " + sessionId);
+            Debug.Log("SESSION STORED QUESTIONS: " + string.Join(",", customQuestions));
         }
 
+        // -----------------------------
+        // END SESSION  ✅ (NEW)
+        // -----------------------------
+        public void EndSession()
+        {
+            sessionId = string.Empty;
+            customQuestions.Clear();
+
+            Debug.Log("SESSION ENDED");
+        }
+
+        // -----------------------------
+        // LOG QUESTION
+        // -----------------------------
         public void LogQuestion(
             int questionIndex,
             int targetNumber,

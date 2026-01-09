@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
 namespace Eduzo.Games.PlaceValue
@@ -14,33 +13,30 @@ namespace Eduzo.Games.PlaceValue
         public List<TMP_InputField> inputFields;
 
         private int activeIndex = 0;
-        private PlaceValueGameMode selectedMode;
 
-        void Start()
+        void Awake()
         {
             panel.SetActive(false);
+        }
 
-            // Disable all rows initially
-            for (int i = 0; i < inputFields.Count; i++)
-                inputFields[i].transform.parent.gameObject.SetActive(false);
+        void OnEnable()
+        {
+            panel.SetActive(false);
         }
 
         // --------------------------------------------------
-        // OPEN FROM PRACTICE / TEST BUTTON
+        // OPEN FROM PRACTICE / TEST
         // --------------------------------------------------
-        public void Open(PlaceValueGameMode mode)
+        public void Open()
         {
-            selectedMode = mode;
             panel.SetActive(true);
 
-            // Reset all fields
             for (int i = 0; i < inputFields.Count; i++)
             {
                 inputFields[i].text = "";
                 inputFields[i].transform.parent.gameObject.SetActive(false);
             }
 
-            // Activate first input
             activeIndex = 0;
             inputFields[0].transform.parent.gameObject.SetActive(true);
 
@@ -49,16 +45,14 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // --------------------------------------------------
-        // SPACE → ACTIVATE NEXT INPUT
+        // SPACE → NEXT INPUT
         // --------------------------------------------------
         void Update()
         {
             if (!panel.activeSelf) return;
 
             if (Input.GetKeyDown(KeyCode.Space))
-            {
                 ActivateNextInput();
-            }
         }
 
         void ActivateNextInput()
@@ -75,12 +69,10 @@ namespace Eduzo.Games.PlaceValue
 
             EventSystem.current.SetSelectedGameObject(inputFields[activeIndex].gameObject);
             inputFields[activeIndex].ActivateInputField();
-
-            Debug.Log("Activated Input Index: " + activeIndex);
         }
 
         // --------------------------------------------------
-        // OK BUTTON
+        // OK BUTTON  (FINAL, CORRECT)
         // --------------------------------------------------
         public void Submit()
         {
@@ -93,18 +85,25 @@ namespace Eduzo.Games.PlaceValue
             }
 
             if (customNumbers.Count == 0)
-            {
-                Debug.LogWarning("No custom numbers entered");
                 return;
-            }
 
-            //  MOST IMPORTANT LINE
-            PlaceValueGameModeManager.CurrentMode = selectedMode;
+            // Start session with entered numbers
+            PlaceValueGameSessionManager.Instance.StartSession(
+                PlaceValueGameModeManager.CurrentMode,
+                customNumbers
+            );
 
-            // Start session
-            PlaceValueGameSessionManager.Instance.StartSession(selectedMode, customNumbers);
+            panel.SetActive(false);
 
-            SceneManager.LoadScene("PlaceValueGameScene");
+            // Switch UI to gameplay
+            PlaceValueUIFlowManager.Instance.ShowGameplay();
+
+            // 🔥 IMPORTANT: explicitly start the game AFTER input
+            PlaceValueGameManager gm = FindAnyObjectByType<PlaceValueGameManager>();
+            if (gm != null)
+                gm.StartGame();
         }
+
+
     }
 }

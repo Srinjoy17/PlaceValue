@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Eduzo.Games.PlaceValue
 {
@@ -13,7 +12,6 @@ namespace Eduzo.Games.PlaceValue
 
         void Start()
         {
-            // Play Main Menu Background Music
             PlaceValueAudioManager.Instance.PlayBG("mainmenu");
         }
 
@@ -23,19 +21,14 @@ namespace Eduzo.Games.PlaceValue
         public void PlayGame()
         {
             PlaceValueAudioManager.Instance.PlaySFX("button");
-
             PlayParticle();
 
-            // Switch to Game BG
-            PlaceValueAudioManager.Instance.PlayBG("game");
-
-            // Load scene after small delay
-            Invoke(nameof(LoadGameModes), actionDelay);
+            Invoke(nameof(OpenGameModes), actionDelay);
         }
 
-        void LoadGameModes()
+        void OpenGameModes()
         {
-            SceneManager.LoadScene("PlaceValueGameModes");
+            PlaceValueUIFlowManager.Instance.ShowGameModes();
         }
 
         // ----------------------------------------------------
@@ -44,7 +37,6 @@ namespace Eduzo.Games.PlaceValue
         public void ExitGame()
         {
             PlaceValueAudioManager.Instance.PlaySFX("button");
-
             PlayParticle();
 
             Invoke(nameof(QuitGame), actionDelay);
@@ -57,7 +49,7 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        // PARTICLE SPAWN
+        // PARTICLE
         // ----------------------------------------------------
         void PlayParticle()
         {
@@ -67,7 +59,7 @@ namespace Eduzo.Games.PlaceValue
                 buttonClickParticle,
                 transform.position,
                 Quaternion.identity,
-                transform.parent   // keeps it in UI hierarchy
+                transform.parent
             );
 
             ps.Play();

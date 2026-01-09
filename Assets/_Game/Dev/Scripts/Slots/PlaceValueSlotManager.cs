@@ -30,42 +30,50 @@ namespace Eduzo.Games.PlaceValue
             };
         }
 
+        // ----------------------------------------------------
+        // SETUP SLOTS FOR CURRENT QUESTION
+        // ----------------------------------------------------
         public void SetupSlots(int[] digits)
         {
             int len = digits.Length;
-            int start = 5 - len;
+            int start = slots.Length - len;
 
-            // Reset all slots first
+            // Reset all slots
             for (int i = 0; i < slots.Length; i++)
             {
                 slots[i].SetExpectedValue(-999);
                 slots[i].slotIndex = -1;
             }
 
-            // Assign expected digit + correct slotIndex
+            // Assign expected values
             for (int i = 0; i < len; i++)
             {
                 int slotID = start + i;
 
                 slots[slotID].SetExpectedValue(digits[i]);
-                slots[slotID].slotIndex = i;  // <--- SUPER IMPORTANT FIX
+                slots[slotID].slotIndex = slotID; // place index
             }
         }
 
-        // Tutorial glow preview
-        public void PreviewTutorial(int number)
+        // ----------------------------------------------------
+        // 🔥 SAFE TUTORIAL PREVIEW (BY PLACE INDEX)
+        // ----------------------------------------------------
+        public void PreviewTutorialByIndex(int placeIndex)
         {
             if (!tutorialMode) return;
 
-            foreach (PlaceValueDropSlot s in slots)
+            for (int i = 0; i < slots.Length; i++)
             {
-                if (s.ExpectedValue == number)
-                    s.ShowTutorialGlow();
+                if (i == placeIndex)
+                    slots[i].ShowTutorialGlow();
                 else
-                    s.ClearTutorialGlow();
+                    slots[i].ClearTutorialGlow();
             }
         }
 
+        // ----------------------------------------------------
+        // CLEAR PREVIEW
+        // ----------------------------------------------------
         public void ClearPreview()
         {
             foreach (PlaceValueDropSlot s in slots)

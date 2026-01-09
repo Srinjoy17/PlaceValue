@@ -1,216 +1,235 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using Eduzo.Games.PlaceValue;
 
-public class PlaceValueGameManager : MonoBehaviour
+namespace Eduzo.Games.PlaceValue
 {
-    [Header("Core Managers")]
-    public PlaceValueSlotManager slotManager;
-    public PlaceValueTileManager tileManager;
-    public PlaceValueGameOverManager gameOverManager;
-    public PlaceValueTimerManager timerManager;
-
-    [Header("UI")]
-    public GameObject timerUI;
-    public GameObject healthUI;
-    public GameObject scoreUI;
-
-    // Question flow
-    private int currentQuestion = 0;
-    private int totalQuestions = 5;
-
-    // Slot tracking
-    private int filledSlots = 0;
-    private int requiredSlots = 0;
-    private int[] currentDigits;
-
-    // Mode checks
-    private bool isPractice => PlaceValueGameModeManager.CurrentMode == PlaceValueGameMode.Practice;
-    private List<int> customList => PlaceValueGameSessionManager.Instance.customQuestions;
-    private bool hasCustomNumbers => customList != null && customList.Count > 0;
-
-    // ----------------------------------------------------
-    // EVENT LISTENERS
-    // ----------------------------------------------------
-    void OnEnable()
+    public class PlaceValueGameManager : MonoBehaviour
     {
-        PlaceValueGameEvents.OnPlaceValueTileCorrect += HandleCorrectTile;
-        PlaceValueGameEvents.OnPlaceValueTileWrong += HandleWrongTile;
-        PlaceValueGameEvents.OnPlaceValueGameOver += HandleGameOver;
+        [Header("Core Managers")]
+        public PlaceValueSlotManager slotManager;
+        public PlaceValueTileManager tileManager;
+        public PlaceValueGameOverManager gameOverManager;
+        public PlaceValueTimerManager timerManager;
 
-        gameOverManager.gameObject.SetActive(false);
-    }
+        [Header("UI")]
+        public GameObject timerUI;
+        public GameObject healthUI;
+        public GameObject scoreUI;
 
-    void OnDisable()
-    {
-        PlaceValueGameEvents.OnPlaceValueTileCorrect -= HandleCorrectTile;
-        PlaceValueGameEvents.OnPlaceValueTileWrong -= HandleWrongTile;
-        PlaceValueGameEvents.OnPlaceValueGameOver -= HandleGameOver;
-    }
+        // -----------------------------
+        // GAME STATE
+        // -----------------------------
+        private int currentQuestionIndex = 0;
+        private int totalQuestions = 5;
 
-    // ----------------------------------------------------
-    // GAME START
-    // ----------------------------------------------------
-    void Start()
-    {
-        // Practice mode UI handling
-        if (isPractice)
+        private int filledSlots = 0;
+        private int requiredSlots = 0;
+        private int[] currentDigits;
+
+        private bool gameStarted = false;
+
+        // -----------------------------
+        // MODE & SESSION
+        // -----------------------------
+        private bool isPractice =>
+            PlaceValueGameModeManager.CurrentMode == PlaceValueGameMode.Practice;
+
+        private List<int> customList =>
+            PlaceValueGameSessionManager.Instance.customQuestions;
+
+        private bool hasCustomNumbers =>
+            customList != null && customList.Count > 0;
+
+        // -----------------------------
+        // EVENTS
+        // -----------------------------
+        void OnEnable()
         {
-            timerUI.SetActive(false);
-            healthUI.SetActive(false);
-            scoreUI?.SetActive(false);
-            timerManager.StopTimer();
-        }
-        else
-        {
-            timerUI.SetActive(true);
-            healthUI.SetActive(true);
-            timerManager.ResetTimer();
+            PlaceValueGameEvents.OnPlaceValueTileCorrect += HandleCorrectTile;
+            PlaceValueGameEvents.OnPlaceValueTileWrong += HandleWrongTile;
+            PlaceValueGameEvents.OnPlaceValueGameOver += HandleGameOver;
         }
 
-        // Start first question directly
-        NextQuestion();
-    }
-
-    // ----------------------------------------------------
-    // NEXT QUESTION
-    // ----------------------------------------------------
-    void NextQuestion()
-    {
-        // Custom mode → number of questions = custom entries
-        if (hasCustomNumbers)
-            totalQuestions = customList.Count;
-
-        // All questions completed
-        if (currentQuestion >= totalQuestions)
+        void OnDisable()
         {
+            PlaceValueGameEvents.OnPlaceValueTileCorrect -= HandleCorrectTile;
+            PlaceValueGameEvents.OnPlaceValueTileWrong -= HandleWrongTile;
+            PlaceValueGameEvents.OnPlaceValueGameOver -= HandleGameOver;
+        }
+
+        // -----------------------------
+        // DO NOT AUTO START
+        // -----------------------------
+        void Start()
+        {
+            // Game starts ONLY via StartGame()
+        }
+
+        // -----------------------------
+        // RESET GAME COMPLETELY
+        // -----------------------------
+        public void ResetGame()
+        {
+            gameStarted = false;
+            currentQuestionIndex = 0;
+            filledSlots = 0;
+            requiredSlots = 0;
+
+            tileManager.ResetTiles();
+            slotManager.SetupSlots(new int[0]);
+        }
+
+        // -----------------------------
+        // START GAME (CALLED FROM UI)
+        // -----------------------------
+        public void StartGame()
+        {
+            ResetGame();
+            gameStarted = true;
+
             if (isPractice)
             {
-                SceneManager.LoadScene("PlaceValueGameModes");
+                timerUI.SetActive(false);
+                healthUI.SetActive(false);
+                scoreUI?.SetActive(false);
+                timerManager.StopTimer();
+            }
+            else
+            {
+                timerUI.SetActive(true);
+                healthUI.SetActive(true);
+                timerManager.ResetTimer();
+            }
+
+            NextQuestion();
+        }
+
+        // -----------------------------
+        // NEXT QUESTION
+        // -----------------------------
+        void NextQuestion()
+        {
+            if (hasCustomNumbers)
+                totalQuestions = customList.Count;
+
+            // GAME FINISHED
+            if (currentQuestionIndex >= totalQuestions)
+            {
+                if (isPractice)
+                {
+                    PlaceValueUIFlowManager.Instance.ShowMainMenu();
+                    return;
+                }
+
+                PlaceValueUIFlowManager.Instance.ShowGameOver();
+                gameOverManager.GameWon();
+                PlaceValueAudioManager.Instance.PlaySFX("win");
+                timerManager.StopTimer();
                 return;
             }
 
-            gameOverManager.gameObject.SetActive(true);
-            gameOverManager.GameWon();
-            PlaceValueAudioManager.Instance.PlaySFX("win");
-            timerManager.StopTimer();
-            return;
-        }
+            // LOAD QUESTION
+            if (hasCustomNumbers)
+            {
+                GenerateCustomNumber(customList[currentQuestionIndex]);
+            }
+            else
+            {
+                int digitCount = 2;
+                if (currentQuestionIndex == 2 || currentQuestionIndex == 3)
+                    digitCount = 3;
+                if (currentQuestionIndex >= 4)
+                    digitCount = 4;
 
-        currentQuestion++;
+                GenerateRandomNumber(digitCount);
+            }
 
-        // Reset systems per question (TEST MODE ONLY)
-        if (!isPractice)
-        {
-            PlaceValueHealthManager hm = FindAnyObjectByType < PlaceValueHealthManager>();
-            if (hm != null) hm.ResetHealth();
-
-            timerManager.ResetTimer();
-        }
-
-        Debug.Log("QUESTION " + currentQuestion);
-
-        // Generate question
-        if (hasCustomNumbers)
-        {
-            GenerateCustomNumber(customList[currentQuestion - 1]);
-        }
-        else
-        {
-            int digitCount = 2;
-            if (currentQuestion == 3 || currentQuestion == 4) digitCount = 3;
-            if (currentQuestion >= 5) digitCount = 4;
-
-            GenerateRandomNumber(digitCount);
-        }
-    }
-
-    // ----------------------------------------------------
-    // RANDOM NUMBER
-    // ----------------------------------------------------
-    void GenerateRandomNumber(int digits)
-    {
-        currentDigits = new int[digits];
-
-        for (int i = 0; i < digits; i++)
-            currentDigits[i] = Random.Range(0, 10);
-
-        if (currentDigits[0] == 0)
-            currentDigits[0] = Random.Range(1, 10);
-
-        ApplyDigits();
-    }
-
-    // ----------------------------------------------------
-    // CUSTOM NUMBER
-    // ----------------------------------------------------
-    void GenerateCustomNumber(int number)
-    {
-        string numStr = number.ToString();
-        currentDigits = new int[numStr.Length];
-
-        for (int i = 0; i < numStr.Length; i++)
-            currentDigits[i] = numStr[i] - '0';
-
-        ApplyDigits();
-    }
-
-    // ----------------------------------------------------
-    // APPLY DIGITS
-    // ----------------------------------------------------
-    void ApplyDigits()
-    {
-        requiredSlots = currentDigits.Length;
-        filledSlots = 0;
-
-        slotManager.SetupSlots(currentDigits);
-        tileManager.SetupTiles(currentDigits);
-
-        Debug.Log("Digits: " + string.Join(",", currentDigits));
-    }
-
-    // ----------------------------------------------------
-    // CORRECT TILE
-    // ----------------------------------------------------
-    void HandleCorrectTile()
-    {
-        filledSlots++;
-
-        if (filledSlots >= requiredSlots)
-        {
             if (!isPractice)
-                PlaceValueGameEvents.OnPlaceValueCorrectPlacement?.Invoke();
+            {
+                PlaceValueHealthManager hm =
+                    FindAnyObjectByType<PlaceValueHealthManager>();
+                if (hm != null) hm.ResetHealth();
 
-            Invoke(nameof(NextQuestion), 1f);
+                timerManager.ResetTimer();
+            }
+
+            currentQuestionIndex++;
         }
-    }
 
-    // ----------------------------------------------------
-    // WRONG TILE
-    // ----------------------------------------------------
-    void HandleWrongTile()
-    {
-        if (isPractice)
+        // -----------------------------
+        // RANDOM NUMBER
+        // -----------------------------
+        void GenerateRandomNumber(int digits)
         {
-            Debug.Log("Practice Mode → No penalty");
-            return;
+            currentDigits = new int[digits];
+
+            for (int i = 0; i < digits; i++)
+                currentDigits[i] = Random.Range(0, 10);
+
+            if (currentDigits[0] == 0)
+                currentDigits[0] = Random.Range(1, 10);
+
+            ApplyDigits();
         }
 
-        Debug.Log("Wrong tile → Health reduced");
-    }
+        // -----------------------------
+        // CUSTOM NUMBER
+        // -----------------------------
+        void GenerateCustomNumber(int number)
+        {
+            string numStr = number.ToString();
+            currentDigits = new int[numStr.Length];
 
-    // ----------------------------------------------------
-    // GAME OVER
-    // ----------------------------------------------------
-    void HandleGameOver()
-    {
-        if (isPractice)
-            return;
+            for (int i = 0; i < numStr.Length; i++)
+                currentDigits[i] = numStr[i] - '0';
 
-        gameOverManager.gameObject.SetActive(true);
-        gameOverManager.GameLost();
-        PlaceValueAudioManager.Instance.PlaySFX("lose");
-        timerManager.StopTimer();
+            ApplyDigits();
+        }
+
+        // -----------------------------
+        // APPLY DIGITS
+        // -----------------------------
+        void ApplyDigits()
+        {
+            requiredSlots = currentDigits.Length;
+            filledSlots = 0;
+
+            slotManager.SetupSlots(currentDigits);
+            tileManager.SetupTiles(currentDigits);
+        }
+
+        // -----------------------------
+        // TILE EVENTS
+        // -----------------------------
+        void HandleCorrectTile()
+        {
+            filledSlots++;
+
+            if (filledSlots >= requiredSlots)
+            {
+                if (!isPractice)
+                    PlaceValueGameEvents.OnPlaceValueCorrectPlacement?.Invoke();
+
+                Invoke(nameof(NextQuestion), 1f);
+            }
+        }
+
+        void HandleWrongTile()
+        {
+            if (isPractice) return;
+        }
+
+        // -----------------------------
+        // GAME LOST
+        // -----------------------------
+        void HandleGameOver()
+        {
+            if (isPractice) return;
+
+            PlaceValueUIFlowManager.Instance.ShowGameOver();
+            gameOverManager.GameLost();
+            PlaceValueAudioManager.Instance.PlaySFX("lose");
+            timerManager.StopTimer();
+        }
     }
 }
