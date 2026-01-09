@@ -27,7 +27,7 @@ namespace Eduzo.Games.PlaceValue
         public float tutorialGlowSize = 24f;
 
         // ----------------------------------------------------
-        // 🔥 PARTICLE EFFECTS (NEW)
+        // PARTICLE EFFECTS
         // ----------------------------------------------------
 
         [Header("Particle Effects")]
@@ -84,16 +84,17 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        // TILE DROP LOGIC (UNCHANGED)
+        // TILE DROP LOGIC
         // ----------------------------------------------------
 
         public bool AcceptTile(PlaceValueTileDrag tile)
         {
             if (isFilled) return false;
 
+            // Slot not active
             if (ExpectedValue < 0)
             {
-                PlayGlow(new Color(1f, 0.2f, 0.2f));
+                PlayGlow(Color.red);
                 PlayParticle(wrongParticle);
                 PlaceValueAudioManager.Instance?.PlaySFX("wrong");
                 PlaceValueGameEvents.OnPlaceValueTileWrong?.Invoke();
@@ -106,7 +107,7 @@ namespace Eduzo.Games.PlaceValue
             if (valueMatches && indexMatches)
                 PlayGlow(Color.green);
             else
-                PlayGlow(new Color(1f, 0.2f, 0.2f));
+                PlayGlow(Color.red);
 
             // ------------------------------------------------
             // CORRECT PLACEMENT
@@ -115,17 +116,27 @@ namespace Eduzo.Games.PlaceValue
             {
                 isFilled = true;
 
-                tile.transform.SetParent(transform);
+                // IMPORTANT: false prevents scale inheritance
+                tile.transform.SetParent(transform, false);
 
-                RectTransform r = tile.GetComponent<RectTransform>();
-                NormalizeRect(r, new Vector2(70, 70));
+                RectTransform tileRect = tile.GetComponent<RectTransform>();
+                RectTransform slotRect = GetComponent<RectTransform>();
+
+                // Normalize tile transform
+                tileRect.localScale = Vector3.one;
+                tileRect.anchorMin = new Vector2(0.5f, 0.5f);
+                tileRect.anchorMax = new Vector2(0.5f, 0.5f);
+                tileRect.pivot = new Vector2(0.5f, 0.5f);
+                tileRect.anchoredPosition = Vector2.zero;
+
+                // 🔥 Match tile size to slot size
+                tileRect.sizeDelta = slotRect.sizeDelta;
 
                 CanvasGroup cg = tile.GetComponent<CanvasGroup>();
-                if (cg != null) cg.blocksRaycasts = false;
+                if (cg != null)
+                    cg.blocksRaycasts = false;
 
-                //  PLAY CORRECT PARTICLE
                 PlayParticle(correctParticle);
-
                 PlaceValueAudioManager.Instance?.PlaySFX("correct");
                 PlaceValueGameEvents.OnPlaceValueTileCorrect?.Invoke();
                 return true;
@@ -141,7 +152,7 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        // CONFIGURABLE GLOW (LEAN TWEEN)
+        // GLOW ANIMATION
         // ----------------------------------------------------
 
         private void PlayGlow(Color color)
@@ -152,14 +163,14 @@ namespace Eduzo.Games.PlaceValue
             outline.effectColor = color;
 
             LeanTween.value(gameObject, 0f, 1f, glowExpandDuration)
-                .setOnUpdate((float v) =>
+                .setOnUpdate(v =>
                 {
                     outline.effectDistance = new Vector2(glowSize * v, glowSize * v);
                 })
                 .setOnComplete(() =>
                 {
                     LeanTween.value(gameObject, 1f, 0f, glowShrinkDuration)
-                        .setOnUpdate((float v2) =>
+                        .setOnUpdate(v2 =>
                         {
                             outline.effectDistance = new Vector2(glowSize * v2, glowSize * v2);
                         })
@@ -172,7 +183,7 @@ namespace Eduzo.Games.PlaceValue
         }
 
         // ----------------------------------------------------
-        //  PARTICLE PLAY (NEW)
+        // PARTICLES
         // ----------------------------------------------------
 
         private void PlayParticle(ParticleSystem particle)
@@ -190,22 +201,6 @@ namespace Eduzo.Games.PlaceValue
 
             float life = ps.main.duration + ps.main.startLifetime.constantMax;
             Destroy(ps.gameObject, life);
-        }
-
-        // ----------------------------------------------------
-        // RECT NORMALIZATION
-        // ----------------------------------------------------
-
-        private void NormalizeRect(RectTransform r, Vector2 size)
-        {
-            if (r == null) return;
-
-            r.localScale = Vector3.one;
-            r.anchorMin = new Vector2(0.5f, 0.5f);
-            r.anchorMax = new Vector2(0.5f, 0.5f);
-            r.pivot = new Vector2(0.5f, 0.5f);
-            r.sizeDelta = size;
-            r.anchoredPosition = Vector2.zero;
         }
     }
 }
