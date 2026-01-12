@@ -71,7 +71,7 @@ namespace Eduzo.Games.PlaceValue
         // ============================================
         public void OnDrag(PointerEventData eventData)
         {
-            rect.position = eventData.position;
+            rect.anchoredPosition += eventData.delta / canvas.scaleFactor;
 
             // ✅ SAFE TUTORIAL PREVIEW (BY PLACE INDEX)
             PlaceValueSlotManager.Instance.PreviewTutorialByIndex(digitIndex);
